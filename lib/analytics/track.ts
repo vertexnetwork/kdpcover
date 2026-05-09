@@ -3,6 +3,8 @@
 import { track as vercelTrack } from "@vercel/analytics";
 import type { Format, Paper } from "@kdp/calc";
 
+export type TemplateBuySource = "store-card" | "product-page" | "calculator-cta" | "pseo";
+
 export type AnalyticsEvent =
   | {
       name: "calculate";
@@ -13,7 +15,19 @@ export type AnalyticsEvent =
   | { name: "share_link_copied"; props: Record<string, never> }
   | { name: "embed_snippet_copied"; props: Record<string, never> }
   | { name: "template_downloaded"; props: { format: Format } }
-  | { name: "pwa_installed"; props: Record<string, never> };
+  | { name: "pwa_installed"; props: Record<string, never> }
+  | {
+      name: "template_buy_click";
+      props: { sku: string; source: TemplateBuySource; price: number };
+    }
+  | {
+      name: "template_notify_click";
+      props: { sku: string; source: TemplateBuySource };
+    }
+  | {
+      name: "template_upsell_view";
+      props: { sku: string; source: TemplateBuySource };
+    };
 
 export function track<E extends AnalyticsEvent>(event: E) {
   vercelTrack(event.name, event.props);

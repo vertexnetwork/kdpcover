@@ -15,6 +15,7 @@ import { CoverDiagram } from "./CoverDiagram";
 import { EmbedSnippet } from "./EmbedSnippet";
 import { HandoffBlock } from "./HandoffBlock";
 import { ShareButton } from "./ShareButton";
+import { TemplateUpsell } from "./TemplateUpsell";
 import { pageBucket, track } from "@/lib/analytics/track";
 import { AlertTriangle, Code, Copy, Download, Minus, Plus, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
@@ -49,6 +50,11 @@ export function Calculator({ initial, compact, silent }: Props) {
   const [unit, setUnit] = useState<Unit>("in");
   const [copiedValues, setCopiedValues] = useState(false);
 
+  // Tracks whether the user has interacted with any input (or arrived with
+  // a populated share hash). Hash sync is gated on this so a fresh visit
+  // to "/" stays clean — no auto-generated `#s=...` polluting the URL.
+  const userTouched = useRef(false);
+
   // Hydrate from URL hash once on mount.
   useEffect(() => {
     if (silent) {
@@ -56,11 +62,17 @@ export function Calculator({ initial, compact, silent }: Props) {
       return;
     }
     const hash = window.location.hash.replace(/^#/, "");
-    const params = new URLSearchParams(hash);
-    const code = params.get("s");
-    if (code) {
-      const decoded = decodeState(code);
-      if (decoded) setState(decoded);
+    if (hash) {
+      const params = new URLSearchParams(hash);
+      const code = params.get("s");
+      if (code) {
+        const decoded = decodeState(code);
+        if (decoded) {
+          setState(decoded);
+          // Existing hash → keep it in sync as the user makes changes.
+          userTouched.current = true;
+        }
+      }
     }
     setHydrated(true);
   }, [silent]);
@@ -76,10 +88,12 @@ export function Calculator({ initial, compact, silent }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated]);
 
-  // Debounced hash sync.
+  // Debounced hash sync — only runs after the user has actually touched
+  // an input (or arrived with a hash). A fresh "/" load stays clean.
   const hashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!hydrated || silent) return;
+    if (!userTouched.current) return;
     if (hashTimer.current) clearTimeout(hashTimer.current);
     hashTimer.current = setTimeout(() => {
       const code = encodeState(state);
@@ -135,6 +149,7 @@ export function Calculator({ initial, compact, silent }: Props) {
 
   const setFormat = (format: Format) => {
     if (format === state.format) return;
+    userTouched.current = true;
     setState((s) => {
       const next = { ...s, format };
       const allowedTrims = trimsForFormat(format);
@@ -163,6 +178,7 @@ export function Calculator({ initial, compact, silent }: Props) {
 
   const setPaper = (paper: Paper) => {
     if (paper === state.paper) return;
+    userTouched.current = true;
     setState((s) => ({ ...s, paper }));
     track({ name: "paper_changed", props: { paper } });
   };
@@ -176,6 +192,8 @@ export function Calculator({ initial, compact, silent }: Props) {
         `${FORMAT_LABEL[state.format]} supports ${bounds.min}–${bounds.max} pages — clamped to ${clamped}.`,
       );
     }
+    if (clamped === state.pageCount) return;
+    userTouched.current = true;
     setState((s) => ({ ...s, pageCount: clamped }));
   };
 
@@ -186,12 +204,14 @@ export function Calculator({ initial, compact, silent }: Props) {
     }
     setCustomMode(false);
     const found = trims.find((t) => t.slug === slug);
-    if (found)
+    if (found) {
+      userTouched.current = true;
       setState((s) => ({
         ...s,
         trimWidthIn: found.widthIn,
         trimHeightIn: found.heightIn,
       }));
+    }
   };
 
   const matchedPreset = trims.find(
@@ -207,6 +227,7 @@ export function Calculator({ initial, compact, silent }: Props) {
   };
 
   const resetDefaults = () => {
+    userTouched.current = true;
     setState({ ...DEFAULT, ...initial });
     setCustomMode(false);
     setNotice("Reset to defaults.");
@@ -263,7 +284,10 @@ export function Calculator({ initial, compact, silent }: Props) {
                 step={0.01}
                 min={3}
                 max={12}
-                onChange={(v) => setState((s) => ({ ...s, trimWidthIn: v }))}
+                onChange={(v) => {
+                  userTouched.current = true;
+                  setState((s) => ({ ...s, trimWidthIn: v }));
+                }}
               />
               <NumberInput
                 label="Height (in)"
@@ -271,7 +295,10 @@ export function Calculator({ initial, compact, silent }: Props) {
                 step={0.01}
                 min={3}
                 max={14}
-                onChange={(v) => setState((s) => ({ ...s, trimHeightIn: v }))}
+                onChange={(v) => {
+                  userTouched.current = true;
+                  setState((s) => ({ ...s, trimHeightIn: v }));
+                }}
               />
             </div>
           )}
@@ -416,6 +443,7 @@ export function Calculator({ initial, compact, silent }: Props) {
           )}
         </div>
 
+        {!compact && <TemplateUpsell input={state} output={out} />}
         {!compact && <HandoffBlock input={state} output={out} />}
         {!compact && <EmbedSnippet open={embedOpen} onOpenChange={setEmbedOpen} />}
       </div>

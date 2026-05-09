@@ -3,6 +3,7 @@ import { MobileMenu } from "./MobileMenu";
 
 export const NAV_LINKS = [
   { href: "/", label: "Calculator" },
+  { href: "/templates", label: "Templates" },
   { href: "/guide", label: "Guide" },
   { href: "/recommended", label: "Recommended" },
   { href: "/about", label: "About" },

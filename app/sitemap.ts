@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { curatedPseoSlugs } from "@kdp/slug";
+import { CATALOG, STORE_PATH } from "@/lib/templates/catalog";
 
 const SITE = "https://kdpcover.pro";
 const PER_SHARD = 45000;
@@ -14,7 +15,7 @@ const BUILD_LAST_MOD = new Date(
 );
 
 export async function generateSitemaps(): Promise<{ id: number }[]> {
-  const total = curatedPseoSlugs().length + 16;
+  const total = curatedPseoSlugs().length + 16 + CATALOG.length;
   const shards = Math.max(1, Math.ceil(total / PER_SHARD));
   return Array.from({ length: shards }, (_, i) => ({ id: i }));
 }
@@ -36,6 +37,7 @@ export default async function sitemap({
     "/embed",
     "/terms",
     "/privacy",
+    STORE_PATH,
   ];
 
   const all: MetadataRoute.Sitemap = [
@@ -43,7 +45,13 @@ export default async function sitemap({
       url: `${SITE}${u || "/"}`,
       lastModified: BUILD_LAST_MOD,
       changeFrequency: "weekly" as const,
-      priority: u === "" ? 1.0 : 0.7,
+      priority: u === "" ? 1.0 : u === STORE_PATH ? 0.9 : 0.7,
+    })),
+    ...CATALOG.map((sku) => ({
+      url: `${SITE}${STORE_PATH}/${sku.slug}`,
+      lastModified: BUILD_LAST_MOD,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
     })),
     ...slugs.map((slug) => ({
       url: `${SITE}/calculator/${slug}`,

@@ -1,4 +1,4 @@
-import { recommendations } from "@/lib/content/recommendations";
+import { recommendations, resolveRecommendationUrl } from "@/lib/content/recommendations";
 import { ExternalLink } from "lucide-react";
 
 export const metadata = {
@@ -29,7 +29,7 @@ export default function RecommendedPage() {
             </div>
             <p className="mt-2 text-sm text-sage-800">{r.blurb}</p>
             <a
-              href={r.url}
+              href={resolveRecommendationUrl(r)}
               target="_blank"
               rel="noopener sponsored noreferrer"
               className="mt-3 inline-flex items-center gap-1 text-sm text-warm-500 hover:text-warm-700"
