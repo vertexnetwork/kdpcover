@@ -30,7 +30,6 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: siteFacts.site.name,
     url: SITE_URL,
-    sameAs: ["https://x.com/spinehero"],
   };
 }
 

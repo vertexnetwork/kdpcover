@@ -1,6 +1,6 @@
 # KDP Cover & Spine Width Calculator
 
-> **Domain:** kdpcover.pro · **Social:** @spinehero · **Repo:** GitHub · **Host:** Vercel
+> **Domain:** kdpcover.pro · **Repo:** GitHub · **Host:** Vercel
 > A precision client-side calculator for Amazon KDP paperback and case-laminate hardcover covers.
 
 ---
@@ -33,9 +33,9 @@ Path-to-$200/mo break-even: ~13,300 monthly PVs at $15 RPM.
 
 ### 1.5 Distribution
 - **pSEO** for every common combination of `format × paper × page-count × trim` (see §2.4).
-- **Reddit seeding** in r/selfpublish, r/KDP, r/writing, r/IndieAuthors, r/PubTips.
 - **Embed-virality**: third-party blogs and YouTube creators can iframe the tool (see §2.7).
 - **GEO**: structured for citation by Perplexity / ChatGPT / Gemini search (see §2.10).
+- **Anonymous, no social.** No Twitter/X, Reddit, or community accounts. SEO + GEO + embed only.
 
 ---
 
@@ -336,7 +336,7 @@ Next.js 15 init, Tailwind v4, Vercel link, GitHub repo, Husky, ESLint/Prettier, 
 Vercel Analytics + Speed Insights · Clarity script · AdSense/Ezoic placeholders with reserved containers · privacy policy.
 
 **Phase 6 — Launch hardening (days 16–17)**
-Lighthouse CI · Playwright smoke + visual regression · social seeding kit (Reddit posts, embed snippets for 5 design blogs).
+Lighthouse CI · Playwright smoke + visual regression · embed-snippet kit for 5 design blogs.
 
 **Post-launch:** apply to Mediavine Journey at first 10k-session month; swap ad provider.
 

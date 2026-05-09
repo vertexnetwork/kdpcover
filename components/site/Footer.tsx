@@ -38,18 +38,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-sage-200/60 pt-6 text-xs text-sage-700 sm:flex-row sm:items-center">
+        <div className="mt-10 border-t border-sage-200/60 pt-6 text-xs text-sage-700">
           <p>© {new Date().getFullYear()} kdpcover.pro · Independent tool, not affiliated with Amazon or KDP.</p>
-          <p>
-            <a
-              href="https://x.com/spinehero"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-warm-500"
-            >
-              @spinehero
-            </a>
-          </p>
         </div>
       </div>
     </footer>

@@ -51,10 +51,6 @@ export default function AboutPage() {
         Bugs, feature requests, or accuracy reports:{" "}
         <a href="mailto:hello@kdpcover.pro" className="underline hover:text-warm-500">
           hello@kdpcover.pro
-        </a>{" "}
-        or{" "}
-        <a href="https://x.com/spinehero" target="_blank" rel="noreferrer" className="underline hover:text-warm-500">
-          @spinehero
         </a>
         .
       </p>

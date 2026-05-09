@@ -20,7 +20,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description: `KDP cover spec — spine ${out.spineWidthIn.toFixed(4)}″ (${out.spineWidthMm.toFixed(2)} mm), full cover ${out.fullCoverWidthIn.toFixed(4)} × ${out.fullCoverHeightIn.toFixed(4)} in.`,
     robots: { index: false, follow: true },
     openGraph: { images: [og], title, type: "website" },
-    twitter: { card: "summary_large_image", images: [og] },
   };
 }
 

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   description:
     "Pass KDP's review on the first try. Precision spine width, full-cover dimensions, and safe-zone diagrams for Amazon paperback and case-laminate hardcover books.",
   applicationName: "KDP Cover Calculator",
-  authors: [{ name: "Spine Hero", url: "https://kdpcover.pro" }],
+  authors: [{ name: "kdpcover.pro", url: "https://kdpcover.pro" }],
   keywords: [
     "KDP cover calculator",
     "Amazon KDP spine width",
@@ -43,10 +43,6 @@ export const metadata: Metadata = {
     description:
       "Instant, precise KDP spine width and full-cover dimensions for paperback and hardcover.",
     url: "https://kdpcover.pro",
-  },
-  twitter: {
-    card: "summary_large_image",
-    creator: "@spinehero",
   },
   alternates: {
     canonical: "/",
