@@ -94,7 +94,7 @@ export function calcCover(input: CoverInput): CoverCalcOutput {
       outside: BLEED_IN + PAPERBACK_OUTSIDE_SAFE_IN,
       spineHinge: 0,
     };
-    barcodeBox = paperbackBarcodeBox({ fullW, fullH, tw, spine });
+    barcodeBox = paperbackBarcodeBox({ fullH, tw });
   } else {
     fullW = 2 * tw + spine + 2 * HARDCOVER_HINGE_IN + 2 * HARDCOVER_WRAP_IN;
     fullH = th + 2 * HARDCOVER_WRAP_IN;
@@ -104,12 +104,23 @@ export function calcCover(input: CoverInput): CoverCalcOutput {
       outside: HARDCOVER_WRAP_IN + HARDCOVER_OUTSIDE_SAFE_IN,
       spineHinge: HARDCOVER_HINGE_IN,
     };
-    barcodeBox = hardcoverBarcodeBox({ fullW, fullH, tw, spine });
+    barcodeBox = hardcoverBarcodeBox({ fullH, tw });
   }
 
-  const spineTextEligible =
-    pageCount >= SPINE_TEXT_MIN_PAGES &&
-    (format === "paperback" || pageCount >= SPINE_TEXT_MIN_PAGES);
+  const spineTextEligible = pageCount >= SPINE_TEXT_MIN_PAGES;
+
+  if (!spineTextEligible) {
+    warnings.push(
+      `Spine is too narrow for printed text or graphics. KDP requires at least ${SPINE_TEXT_MIN_PAGES} pages.`,
+    );
+  }
+
+  const bounds = format === "paperback" ? { min: 24, max: 828 } : { min: 75, max: 550 };
+  if (pageCount > bounds.max * 0.95 && pageCount <= bounds.max) {
+    warnings.push(
+      `Approaching the KDP ${format} maximum (${bounds.max} pages). Verify with KDP's template generator before submitting.`,
+    );
+  }
 
   return {
     spineWidthIn: round4(spine),
@@ -125,46 +136,22 @@ export function calcCover(input: CoverInput): CoverCalcOutput {
   };
 }
 
-function paperbackBarcodeBox({
-  fullW,
-  fullH,
-  tw,
-  spine,
-}: {
-  fullW: number;
-  fullH: number;
-  tw: number;
-  spine: number;
-}): BarcodeBox {
+function paperbackBarcodeBox({ fullH, tw }: { fullH: number; tw: number }): BarcodeBox {
   // 2" × 1.2" recommended; bottom-right of back cover (back is on the LEFT
   // of the unfolded layout). 0.25" from spine + trim edges, 0.76" from bottom.
   const w = 2;
   const h = 1.2;
-  const x = BLEED_IN + tw - 0.25 - w; // 0.25" from inside (spine) edge of back
+  const x = BLEED_IN + tw - 0.25 - w;
   const y = fullH - BLEED_IN - 0.76 - h;
   return { x: round4(x), y: round4(y), w, h };
-  void spine;
-  void fullW;
 }
 
-function hardcoverBarcodeBox({
-  fullW,
-  fullH,
-  tw,
-  spine,
-}: {
-  fullW: number;
-  fullH: number;
-  tw: number;
-  spine: number;
-}): BarcodeBox {
+function hardcoverBarcodeBox({ fullH, tw }: { fullH: number; tw: number }): BarcodeBox {
   const w = 2;
   const h = 1.2;
   const x = HARDCOVER_WRAP_IN + tw - 0.25 - w;
   const y = fullH - HARDCOVER_WRAP_IN - 0.76 - h;
   return { x: round4(x), y: round4(y), w, h };
-  void spine;
-  void fullW;
 }
 
 function round4(n: number): number {

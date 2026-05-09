@@ -17,8 +17,9 @@ None. The extension runs the calc fully offline; no host access required.
 
 ## Publish
 
-1. Bump `version` in `extension/manifest.json`.
-2. `npm run build:ext`.
-3. Zip `extension/dist/`.
-4. Upload at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
-5. Once published, paste the listing URL into `lib/content/extension.ts → chromeWebStoreUrl`. The `/extension` page picks it up automatically.
+1. Add icons (`icons/icon-{16,32,48,128}.png`) and re-add the `icons` block to `manifest.json` — the Chrome Web Store will reject the listing without them.
+2. Bump `version` in `extension/manifest.json`.
+3. `npm run build:ext`.
+4. Zip `extension/dist/`.
+5. Upload at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
+6. Once published, paste the listing URL into `lib/content/extension.ts → chromeWebStoreUrl`. The `/extension` page picks it up automatically.

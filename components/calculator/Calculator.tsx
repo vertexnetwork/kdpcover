@@ -10,12 +10,16 @@ import {
   trimsForFormat,
 } from "@kdp/limits";
 import { decodeState, encodeState } from "@kdp/share";
+import { buildTemplateSvg } from "@kdp/svg-template";
 import { CoverDiagram } from "./CoverDiagram";
 import { EmbedSnippet } from "./EmbedSnippet";
+import { HandoffBlock } from "./HandoffBlock";
 import { ShareButton } from "./ShareButton";
 import { pageBucket, track } from "@/lib/analytics/track";
-import { AlertTriangle, Code, Copy, Download } from "lucide-react";
+import { AlertTriangle, Code, Copy, Download, Minus, Plus, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
+
+type Unit = "in" | "mm";
 
 type Props = {
   initial?: Partial<CoverInput>;
@@ -42,6 +46,8 @@ export function Calculator({ initial, compact, silent }: Props) {
   const [customMode, setCustomMode] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [embedOpen, setEmbedOpen] = useState(false);
+  const [unit, setUnit] = useState<Unit>("in");
+  const [copiedValues, setCopiedValues] = useState(false);
 
   // Hydrate from URL hash once on mount.
   useEffect(() => {
@@ -196,7 +202,17 @@ export function Calculator({ initial, compact, silent }: Props) {
   const copyValues = async () => {
     const text = `Spine width: ${out.spineWidthIn}″ (${out.spineWidthMm} mm)\nFull cover: ${out.fullCoverWidthIn}″ × ${out.fullCoverHeightIn}″ (${out.fullCoverWidthMm} mm × ${out.fullCoverHeightMm} mm)`;
     await navigator.clipboard.writeText(text);
+    setCopiedValues(true);
+    setTimeout(() => setCopiedValues(false), 1800);
   };
+
+  const resetDefaults = () => {
+    setState({ ...DEFAULT, ...initial });
+    setCustomMode(false);
+    setNotice("Reset to defaults.");
+  };
+
+  const adjustPages = (delta: number) => setPages(state.pageCount + delta);
 
   return (
     <div className={clsx("grid gap-6", compact ? "" : "lg:grid-cols-[1.1fr_1fr]")}>
@@ -272,15 +288,35 @@ export function Calculator({ initial, compact, silent }: Props) {
               className="flex-1 accent-warm-400"
               aria-label="Page count slider"
             />
-            <input
-              type="number"
-              min={bounds.min}
-              max={bounds.max}
-              value={state.pageCount}
-              onChange={(e) => setPages(Number(e.target.value))}
-              className="tabular w-24 rounded-md border border-sage-200 bg-white px-3 py-2 text-right text-sm focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-200"
-              aria-label="Page count"
-            />
+            <div className="flex items-stretch overflow-hidden rounded-md border border-sage-200 bg-white">
+              <button
+                type="button"
+                onClick={() => adjustPages(-1)}
+                disabled={state.pageCount <= bounds.min}
+                aria-label="Decrease page count by 1"
+                className="flex h-11 w-11 items-center justify-center text-sage-700 hover:bg-sage-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Minus className="h-4 w-4" aria-hidden />
+              </button>
+              <input
+                type="number"
+                min={bounds.min}
+                max={bounds.max}
+                value={state.pageCount}
+                onChange={(e) => setPages(Number(e.target.value))}
+                className="tabular w-20 border-x border-sage-200 bg-white px-2 text-center text-sm focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-200"
+                aria-label="Page count"
+              />
+              <button
+                type="button"
+                onClick={() => adjustPages(1)}
+                disabled={state.pageCount >= bounds.max}
+                aria-label="Increase page count by 1"
+                className="flex h-11 w-11 items-center justify-center text-sage-700 hover:bg-sage-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
           </div>
         </Fieldset>
 
@@ -298,39 +334,65 @@ export function Calculator({ initial, compact, silent }: Props) {
 
       <div className={clsx("flex flex-col gap-4")}>
         <div className="rounded-card border border-sage-200 bg-white p-5 sm:p-6">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wide text-sage-700">Spine width</div>
-              <div className="tabular font-display text-4xl">
-                {out.spineWidthIn.toFixed(4)}
-                <span className="ml-1 text-base text-sage-700">in</span>
+              <div className="flex items-center gap-3">
+                <div className="text-xs uppercase tracking-wide text-sage-700">Spine width</div>
+                <UnitToggle unit={unit} onChange={setUnit} />
               </div>
-              <div className="tabular text-sm text-sage-700">{out.spineWidthMm.toFixed(2)} mm</div>
+              <div className="tabular font-display text-4xl">
+                {unit === "in" ? out.spineWidthIn.toFixed(4) : out.spineWidthMm.toFixed(2)}
+                <span className="ml-1 text-base text-sage-700">{unit}</span>
+              </div>
+              <div className="tabular text-sm text-sage-700">
+                {unit === "in"
+                  ? `${out.spineWidthMm.toFixed(2)} mm`
+                  : `${out.spineWidthIn.toFixed(4)} in`}
+              </div>
             </div>
-            <SpineTextBadge eligible={out.spineTextEligible} pageCount={state.pageCount} />
+            <SpineTextBadge eligible={out.spineTextEligible} />
           </div>
 
           <dl className="mt-4 grid grid-cols-2 gap-y-2 text-sm">
-            <dt className="text-sage-700">Full cover (in)</dt>
+            <dt className="text-sage-700">Full cover</dt>
             <dd className="tabular text-right">
-              {out.fullCoverWidthIn.toFixed(4)} × {out.fullCoverHeightIn.toFixed(4)}
+              {unit === "in"
+                ? `${out.fullCoverWidthIn.toFixed(4)} × ${out.fullCoverHeightIn.toFixed(4)} in`
+                : `${out.fullCoverWidthMm.toFixed(2)} × ${out.fullCoverHeightMm.toFixed(2)} mm`}
             </dd>
-            <dt className="text-sage-700">Full cover (mm)</dt>
-            <dd className="tabular text-right">
-              {out.fullCoverWidthMm.toFixed(2)} × {out.fullCoverHeightMm.toFixed(2)}
+            <dt className="text-sage-700">Other unit</dt>
+            <dd className="tabular text-right text-sage-700">
+              {unit === "in"
+                ? `${out.fullCoverWidthMm.toFixed(2)} × ${out.fullCoverHeightMm.toFixed(2)} mm`
+                : `${out.fullCoverWidthIn.toFixed(4)} × ${out.fullCoverHeightIn.toFixed(4)} in`}
             </dd>
           </dl>
 
           <CoverDiagram input={state} output={out} className="mt-5" />
+
+          {out.warnings.length > 0 && (
+            <ul className="mt-4 space-y-1.5" aria-label="Calculator warnings">
+              {out.warnings.map((w, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 rounded-md border border-warm-200 bg-warm-50/60 px-3 py-2 text-xs text-warm-700"
+                >
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span>{w}</span>
+                </li>
+              ))}
+            </ul>
+          )}
 
           {!compact && (
             <div className="mt-5 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={copyValues}
-                className="inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
               >
-                <Copy className="h-4 w-4" aria-hidden /> Copy values
+                <Copy className="h-4 w-4" aria-hidden />
+                {copiedValues ? "Copied!" : "Copy values"}
               </button>
               <ShareButton state={state} />
               <DownloadSvgButton input={state} />
@@ -339,16 +401,49 @@ export function Calculator({ initial, compact, silent }: Props) {
                 onClick={() => setEmbedOpen((o) => !o)}
                 aria-expanded={embedOpen}
                 aria-controls="embed-snippet-panel"
-                className="inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
               >
                 <Code className="h-4 w-4" aria-hidden /> Embed
+              </button>
+              <button
+                type="button"
+                onClick={resetDefaults}
+                className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 py-2 text-sm text-sage-700 hover:text-warm-500"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden /> Reset
               </button>
             </div>
           )}
         </div>
 
+        {!compact && <HandoffBlock input={state} output={out} />}
         {!compact && <EmbedSnippet open={embedOpen} onOpenChange={setEmbedOpen} />}
       </div>
+    </div>
+  );
+}
+
+function UnitToggle({ unit, onChange }: { unit: Unit; onChange: (u: Unit) => void }) {
+  return (
+    <div role="radiogroup" aria-label="Display unit" className="inline-flex rounded-md bg-sage-100 p-0.5 text-xs">
+      {(["in", "mm"] as const).map((u) => {
+        const selected = unit === u;
+        return (
+          <button
+            key={u}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(u)}
+            className={clsx(
+              "rounded-md px-2 py-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-200",
+              selected ? "bg-white text-ink shadow-sm" : "text-sage-700 hover:text-warm-500",
+            )}
+          >
+            {u}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -486,7 +581,7 @@ function NumberInput({
   );
 }
 
-function SpineTextBadge({ eligible, pageCount }: { eligible: boolean; pageCount: number }) {
+function SpineTextBadge({ eligible }: { eligible: boolean }) {
   if (eligible) {
     return (
       <span className="inline-flex items-center rounded-full bg-sage-100 px-2.5 py-1 text-xs font-medium text-sage-800">
@@ -494,11 +589,10 @@ function SpineTextBadge({ eligible, pageCount }: { eligible: boolean; pageCount:
       </span>
     );
   }
-  const need = 79 - pageCount;
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-warm-100 px-2.5 py-1 text-xs font-medium text-warm-700">
       <AlertTriangle className="h-3 w-3" aria-hidden />
-      Spine too narrow — needs ≥79 pages{need > 0 ? ` (+${need})` : ""}
+      Spine too narrow — needs ≥79 pages
     </span>
   );
 }
@@ -506,13 +600,12 @@ function SpineTextBadge({ eligible, pageCount }: { eligible: boolean; pageCount:
 function DownloadSvgButton({ input }: { input: CoverInput }) {
   const onClick = () => {
     track({ name: "template_downloaded", props: { format: input.format } });
-    const out = calcCover(input);
-    const svg = templateSvg({ input, out });
+    const svg = buildTemplateSvg(input);
     const blob = new Blob([svg], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `kdp-${input.format}-${input.paper}-${input.pageCount}p.svg`;
+    a.download = `kdp-${input.format}-${input.paper}-${input.pageCount}p-${input.trimWidthIn}x${input.trimHeightIn}.svg`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -520,24 +613,9 @@ function DownloadSvgButton({ input }: { input: CoverInput }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
     >
       <Download className="h-4 w-4" aria-hidden /> Download SVG template
     </button>
   );
-}
-
-function templateSvg({
-  input,
-  out,
-}: {
-  input: CoverInput;
-  out: ReturnType<typeof calcCover>;
-}): string {
-  const w = out.fullCoverWidthIn * 72;
-  const h = out.fullCoverHeightIn * 72;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <title>KDP ${input.format} ${input.paper} ${input.pageCount}p ${input.trimWidthIn}x${input.trimHeightIn} template</title>
-  <rect x="0" y="0" width="${w}" height="${h}" fill="none" stroke="black" stroke-width="1"/>
-</svg>`;
 }

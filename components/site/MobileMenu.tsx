@@ -44,7 +44,7 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sage-800 hover:bg-sage-100 md:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-sage-800 hover:bg-sage-100 md:hidden"
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label="Open menu"
@@ -77,7 +77,7 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-sage-100"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-sage-100"
               >
                 <X className="h-5 w-5" aria-hidden />
               </button>

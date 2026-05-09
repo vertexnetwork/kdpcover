@@ -20,7 +20,7 @@ export function ShareButton({ state }: { state: CoverInput }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
     >
       <Link2 className="h-4 w-4" aria-hidden /> {copied ? "Copied!" : "Copy share link"}
     </button>

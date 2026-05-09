@@ -3,9 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { calcCover } from "@kdp/calc";
 import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
-import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid, pageCountBounds } from "@kdp/limits";
-import { encodeState } from "@kdp/share";
-import { CoverDiagram } from "@/components/calculator/CoverDiagram";
+import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid } from "@kdp/limits";
+import { Calculator } from "@/components/calculator/Calculator";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -77,7 +76,7 @@ export default async function PseoPage({ params }: Params) {
   });
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+    <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <nav aria-label="Breadcrumb" className="text-xs text-sage-700">
         <Link href="/" className="hover:text-warm-500">Calculator</Link>
         <span className="mx-1">›</span>
@@ -89,42 +88,25 @@ export default async function PseoPage({ params }: Params) {
       <h1 className="mt-3 text-3xl leading-tight sm:text-4xl">
         {FORMAT_LABEL[parsed.format]} · {PAPER_LABEL[parsed.paper]} · {parsed.pageCount} pages — spine {out.spineWidthIn.toFixed(4)}″
       </h1>
-      <p className="mt-3 text-sage-800">
-        For a {parsed.trimWidthIn} × {parsed.trimHeightIn} in {parsed.format} with {PAPER_LABEL[parsed.paper].toLowerCase()} interior pages, the KDP-spec cover is {out.fullCoverWidthIn.toFixed(4)} × {out.fullCoverHeightIn.toFixed(4)} in (spine {out.spineWidthIn.toFixed(4)}″ / {out.spineWidthMm.toFixed(2)} mm).
+      <p className="mt-3 max-w-2xl text-sage-800">
+        For a {parsed.trimWidthIn} × {parsed.trimHeightIn} in {parsed.format} with {PAPER_LABEL[parsed.paper].toLowerCase()} interior pages, the KDP-spec cover is {out.fullCoverWidthIn.toFixed(4)} × {out.fullCoverHeightIn.toFixed(4)} in (spine {out.spineWidthIn.toFixed(4)}″ / {out.spineWidthMm.toFixed(2)} mm). Tweak any field below to recalculate live.
       </p>
 
-      <div className="mt-6 rounded-card border border-sage-200 bg-white p-5 sm:p-6">
-        <table className="w-full text-sm">
-          <tbody className="tabular">
-            <tr>
-              <td className="py-1.5 text-sage-700">Spine width</td>
-              <td className="py-1.5 text-right font-medium">{out.spineWidthIn.toFixed(4)} in · {out.spineWidthMm.toFixed(2)} mm</td>
-            </tr>
-            <tr>
-              <td className="py-1.5 text-sage-700">Full cover width</td>
-              <td className="py-1.5 text-right font-medium">{out.fullCoverWidthIn.toFixed(4)} in · {out.fullCoverWidthMm.toFixed(2)} mm</td>
-            </tr>
-            <tr>
-              <td className="py-1.5 text-sage-700">Full cover height</td>
-              <td className="py-1.5 text-right font-medium">{out.fullCoverHeightIn.toFixed(4)} in · {out.fullCoverHeightMm.toFixed(2)} mm</td>
-            </tr>
-            <tr>
-              <td className="py-1.5 text-sage-700">Spine text</td>
-              <td className="py-1.5 text-right font-medium">{out.spineTextEligible ? "Eligible" : "Too narrow (<79 pages)"}</td>
-            </tr>
-          </tbody>
-        </table>
-        <CoverDiagram input={parsed} output={out} className="mt-5" />
+      <div className="mt-8">
+        <Calculator initial={parsed} />
       </div>
 
-      <section className="mt-8">
-        <h2 className="mb-3 text-xl">Try other sizes</h2>
+      <section className="mt-12">
+        <h2 className="mb-3 text-xl">Try a similar page count</h2>
+        <p className="mb-4 text-sm text-sage-700">
+          Same format, paper, and trim — different page count. Each link is its own pre-computed page.
+        </p>
         <div className="flex flex-wrap gap-2 text-sm">
           {neighbors.map((n) => (
             <Link
               key={n.slug}
               href={`/calculator/${n.slug}`}
-              className="rounded-md border border-sage-200 bg-white px-2.5 py-1 text-sage-800 hover:border-warm-400"
+              className="rounded-md border border-sage-200 bg-white px-3 py-1.5 text-sage-800 hover:border-warm-400"
             >
               {n.label}
             </Link>
@@ -132,23 +114,15 @@ export default async function PseoPage({ params }: Params) {
         </div>
       </section>
 
-      <p className="mt-8 text-xs text-sage-700">
-        Need a different config?{" "}
-        <Link href={`/#s=${encodeState(parsed)}`} className="underline hover:text-warm-500">
-          Open the live calculator →
-        </Link>
-      </p>
-
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }} />
-    </article>
+    </section>
   );
 }
 
 function neighborSlugs(parsed: ReturnType<typeof parseSlug> & object) {
   if (!parsed) return [];
   const out: { slug: string; label: string }[] = [];
-  const bounds = pageCountBounds(parsed.format);
   for (const delta of [-50, -10, -1, 1, 10, 50]) {
     const pages = parsed.pageCount + delta;
     if (!isPageCountValid(parsed.format, pages)) continue;
@@ -156,7 +130,6 @@ function neighborSlugs(parsed: ReturnType<typeof parseSlug> & object) {
       slug: buildSlug({ ...parsed, pageCount: pages }),
       label: `${pages} pages`,
     });
-    void bounds;
   }
   return out;
 }

@@ -45,6 +45,23 @@ export const siteFacts = {
     sizeRecommended: "≤ 40 MB",
     sizeMax: "≤ 650 MB",
   },
+  proof: [
+    {
+      label: "Verified math",
+      detail:
+        "Every multiplier and bleed value is golden-tested against KDP's official cover-template generator on every commit.",
+    },
+    {
+      label: "Zero-data architecture",
+      detail:
+        "All math runs in your browser. No account, no upload, no cookies set by the calculator itself.",
+    },
+    {
+      label: "Standards-grade output",
+      detail:
+        "Downloadable SVG templates open cleanly in Affinity Publisher, Illustrator, Inkscape, and Figma at the exact KDP-spec geometry.",
+    },
+  ],
   faq: [
     {
       q: "What is the KDP white-paper paperback spine width formula?",

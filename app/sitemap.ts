@@ -4,6 +4,15 @@ import { curatedPseoSlugs } from "@kdp/slug";
 const SITE = "https://kdpcover.pro";
 const PER_SHARD = 45000;
 
+// Static lastmod stamped at build time. Crawlers discount sitemaps that
+// claim "now" for every entry on every fetch — a stable build timestamp
+// signals real change-detection.
+const BUILD_LAST_MOD = new Date(
+  process.env.VERCEL_GIT_COMMIT_AUTHOR_DATE ??
+    process.env.SOURCE_DATE_EPOCH ??
+    "2026-05-09T00:00:00Z",
+);
+
 export async function generateSitemaps(): Promise<{ id: number }[]> {
   const total = curatedPseoSlugs().length + 16;
   const shards = Math.max(1, Math.ceil(total / PER_SHARD));
@@ -19,6 +28,7 @@ export default async function sitemap({
   const staticUrls = [
     "",
     "/about",
+    "/guide",
     "/changelog",
     "/recommended",
     "/network",
@@ -31,13 +41,13 @@ export default async function sitemap({
   const all: MetadataRoute.Sitemap = [
     ...staticUrls.map((u) => ({
       url: `${SITE}${u || "/"}`,
-      lastModified: new Date(),
+      lastModified: BUILD_LAST_MOD,
       changeFrequency: "weekly" as const,
       priority: u === "" ? 1.0 : 0.7,
     })),
     ...slugs.map((slug) => ({
       url: `${SITE}/calculator/${slug}`,
-      lastModified: new Date(),
+      lastModified: BUILD_LAST_MOD,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),

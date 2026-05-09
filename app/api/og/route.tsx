@@ -35,7 +35,7 @@ export async function GET(req: Request) {
           display: "flex",
           flexDirection: "column",
           padding: 64,
-          background: "#FFFFF0",
+          background: "#FBF7EB",
           color: "#1F2421",
           fontFamily: "Inter, system-ui, sans-serif",
         }}

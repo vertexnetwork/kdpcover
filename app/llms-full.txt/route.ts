@@ -1,6 +1,41 @@
 import { siteFacts } from "@/lib/content/site-facts";
+import { calcCover, type Format, type Paper } from "@kdp/calc";
 
 export const dynamic = "force-static";
+
+const EXAMPLES: { format: Format; paper: Paper; pageCount: number; trimWidthIn: number; trimHeightIn: number }[] = [
+  { format: "paperback", paper: "white",          pageCount: 100, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "paperback", paper: "white",          pageCount: 200, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "paperback", paper: "white",          pageCount: 300, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "paperback", paper: "white",          pageCount: 400, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "paperback", paper: "cream",          pageCount: 200, trimWidthIn: 5.5,  trimHeightIn: 8.5 },
+  { format: "paperback", paper: "cream",          pageCount: 300, trimWidthIn: 5.5,  trimHeightIn: 8.5 },
+  { format: "paperback", paper: "cream",          pageCount: 400, trimWidthIn: 5.5,  trimHeightIn: 8.5 },
+  { format: "paperback", paper: "color-standard", pageCount: 150, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "paperback", paper: "color-standard", pageCount: 250, trimWidthIn: 7,    trimHeightIn: 10 },
+  { format: "paperback", paper: "color-premium",  pageCount: 100, trimWidthIn: 8.5,  trimHeightIn: 11 },
+  { format: "paperback", paper: "color-premium",  pageCount: 220, trimWidthIn: 8.5,  trimHeightIn: 11 },
+  { format: "paperback", paper: "color-premium",  pageCount: 350, trimWidthIn: 8.5,  trimHeightIn: 11 },
+  { format: "paperback", paper: "white",          pageCount: 24,  trimWidthIn: 5,    trimHeightIn: 8 },
+  { format: "paperback", paper: "white",          pageCount: 828, trimWidthIn: 8.5,  trimHeightIn: 11 },
+  { format: "hardcover", paper: "white",          pageCount: 100, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "hardcover", paper: "white",          pageCount: 200, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "hardcover", paper: "white",          pageCount: 300, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "hardcover", paper: "cream",          pageCount: 200, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "hardcover", paper: "cream",          pageCount: 350, trimWidthIn: 6.14, trimHeightIn: 9.21 },
+  { format: "hardcover", paper: "color-premium",  pageCount: 250, trimWidthIn: 8.5,  trimHeightIn: 11 },
+  { format: "hardcover", paper: "color-premium",  pageCount: 550, trimWidthIn: 6,    trimHeightIn: 9 },
+  { format: "hardcover", paper: "white",          pageCount: 75,  trimWidthIn: 5.5,  trimHeightIn: 8.5 },
+  { format: "hardcover", paper: "white",          pageCount: 150, trimWidthIn: 7,    trimHeightIn: 10 },
+  { format: "hardcover", paper: "white",          pageCount: 450, trimWidthIn: 6,    trimHeightIn: 9 },
+];
+
+const PAPER_LABEL: Record<Paper, string> = {
+  white: "white",
+  cream: "cream",
+  "color-standard": "standard color",
+  "color-premium": "premium color",
+};
 
 export async function GET() {
   const out: string[] = [];
@@ -40,6 +75,16 @@ export async function GET() {
   out.push(`Color: ${siteFacts.resolution.color}`);
   out.push(`Format: ${siteFacts.resolution.file}`);
   out.push(`Recommended size: ${siteFacts.resolution.sizeRecommended}; hard limit: ${siteFacts.resolution.sizeMax}`);
+  out.push("");
+
+  out.push("## Worked examples (computed by the same engine the calculator uses)");
+  for (const ex of EXAMPLES) {
+    const r = calcCover(ex);
+    const formatLabel = ex.format === "paperback" ? "paperback" : "case-laminate hardcover";
+    out.push(
+      `- A ${ex.pageCount}-page ${PAPER_LABEL[ex.paper]} ${formatLabel} at ${ex.trimWidthIn} × ${ex.trimHeightIn} in: spine ${r.spineWidthIn.toFixed(4)} in (${r.spineWidthMm.toFixed(2)} mm); full cover ${r.fullCoverWidthIn.toFixed(4)} × ${r.fullCoverHeightIn.toFixed(4)} in (${r.fullCoverWidthMm.toFixed(2)} × ${r.fullCoverHeightMm.toFixed(2)} mm); spine text ${r.spineTextEligible ? "eligible" : "not eligible"}.`,
+    );
+  }
   out.push("");
 
   out.push("## Frequently asked");

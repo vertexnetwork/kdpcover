@@ -30,18 +30,18 @@ export default function ExtensionPage() {
             href={liveUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center rounded-md bg-warm-400 px-4 py-2 text-sm font-medium text-white hover:bg-warm-500"
+            className="inline-flex min-h-11 items-center rounded-md bg-warm-400 px-4 py-2 text-sm font-medium text-white hover:bg-warm-500"
           >
             Add to Chrome →
           </a>
         ) : (
           <div className="rounded-card border border-sage-200 bg-white p-5">
             <p className="text-sm text-sage-800">
-              The extension is in review with the Chrome Web Store. In the meantime, the web calculator does everything the extension will:
+              The extension is in review with the Chrome Web Store. The web calculator does everything the extension will — and works offline once installed as a PWA.
             </p>
             <Link
               href="/"
-              className="mt-3 inline-flex items-center rounded-md bg-warm-400 px-4 py-2 text-sm font-medium text-white hover:bg-warm-500"
+              className="mt-4 inline-flex min-h-11 items-center rounded-md bg-warm-400 px-4 py-2 text-sm font-medium text-white hover:bg-warm-500"
             >
               Open the web calculator →
             </Link>

@@ -27,10 +27,12 @@ export const PAPERBACK_TRIMS: TrimSize[] = [
 ];
 
 export const HARDCOVER_TRIMS: TrimSize[] = [
+  { widthIn: 5.06, heightIn: 7.81, label: '5.06" × 7.81"', slug: "5.06x7.81", formats: ["hardcover"] },
   { widthIn: 5.5, heightIn: 8.5, label: '5.5" × 8.5"', slug: "5.5x8.5", formats: ["hardcover"] },
   { widthIn: 6, heightIn: 9, label: '6" × 9"', slug: "6x9", formats: ["paperback", "hardcover"] },
   { widthIn: 6.14, heightIn: 9.21, label: '6.14" × 9.21"', slug: "6.14x9.21", formats: ["hardcover"] },
   { widthIn: 7, heightIn: 10, label: '7" × 10"', slug: "7x10", formats: ["hardcover"] },
+  { widthIn: 7.5, heightIn: 9.25, label: '7.5" × 9.25"', slug: "7.5x9.25", formats: ["hardcover"] },
   { widthIn: 8.25, heightIn: 11, label: '8.25" × 11"', slug: "8.25x11", formats: ["hardcover"] },
   { widthIn: 8.5, heightIn: 11, label: '8.5" × 11"', slug: "8.5x11", formats: ["hardcover"] },
 ];
@@ -60,9 +62,14 @@ export const FORMAT_LABEL: Record<Format, string> = {
   hardcover: "Hardcover",
 };
 
-export function paperOptionsForFormat(format: Format): Paper[] {
-  if (format === "hardcover") return ["white", "cream", "color-standard", "color-premium"];
-  return ["white", "cream", "color-standard", "color-premium"];
+export const ALL_PAPERS: readonly Paper[] = ["white", "cream", "color-standard", "color-premium"] as const;
+
+// KDP supports the same four paper options on both formats; case-laminate
+// hardcover collapses them to a single thickness multiplier in calc.ts.
+// Function signature retains `format` for future per-format pruning.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function paperOptionsForFormat(format: Format): readonly Paper[] {
+  return ALL_PAPERS;
 }
 
 export function isPageCountValid(format: Format, pages: number): boolean {

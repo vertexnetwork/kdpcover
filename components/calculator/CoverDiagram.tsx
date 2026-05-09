@@ -13,7 +13,7 @@ type Props = {
 const SAGE = "#9CAF88";
 const WARM = "#C97B5C";
 const INK = "#1F2421";
-const IVORY = "#FFFFF0";
+const IVORY = "#FBF7EB";
 const HINGE = "#C97B5C";
 
 export function CoverDiagram({ input, output, className }: Props) {
@@ -161,16 +161,27 @@ export function CoverDiagram({ input, output, className }: Props) {
         <text
           x={spine.x + spine.w / 2}
           y={spine.y + spine.h / 2}
-          fontSize={Math.min(0.13, spine.w * 0.6)}
+          fontSize={Math.min(0.11, spine.w * 0.45)}
           textAnchor="middle"
           dominantBaseline="middle"
           fill={INK}
-          fillOpacity={0.7}
+          fillOpacity={0.75}
           transform={`rotate(-90 ${spine.x + spine.w / 2} ${spine.y + spine.h / 2})`}
         >
-          Spine
+          Spine {output.spineWidthIn.toFixed(4)} in
         </text>
       )}
+
+      <text
+        x={ox + W / 2}
+        y={oy + H + 0.18}
+        fontSize={0.1}
+        textAnchor="middle"
+        fill={INK}
+        fillOpacity={0.5}
+      >
+        Full cover {output.fullCoverWidthIn.toFixed(4)} × {output.fullCoverHeightIn.toFixed(4)} in
+      </text>
     </svg>
   );
 }

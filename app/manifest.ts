@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Pass KDP's review on the first try. Precision spine width and full cover dimensions.",
     start_url: "/?utm_source=pwa",
     display: "standalone",
-    background_color: "#FFFFF0",
+    background_color: "#FBF7EB",
     theme_color: "#9CAF88",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

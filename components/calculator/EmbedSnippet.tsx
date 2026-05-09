@@ -56,7 +56,7 @@ export function EmbedSnippet({ open, onOpenChange }: Props) {
         <button
           type="button"
           onClick={onCopy}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+          className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
         >
           {copied ? "Copied!" : "Copy snippet"}
         </button>

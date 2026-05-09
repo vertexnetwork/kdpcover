@@ -27,18 +27,14 @@ export function AdSlot({ slot, className, disabled }: Props) {
     );
   }
 
-  // Reserved placeholder — keeps CLS = 0 even before ads load.
+  // Reserved placeholder — keeps CLS = 0 even before ads load. Renders as
+  // an empty box (no "Sponsored" chrome) so the slot doesn't set a tone
+  // before a real impression is available.
   return (
     <div
       aria-hidden
-      className={clsx(
-        "flex w-full items-center justify-center rounded-md border border-dashed border-sage-200 text-xs text-sage-700/60",
-        height,
-        className,
-      )}
+      className={clsx("w-full", height, className)}
       data-ad-slot={slot}
-    >
-      Sponsored
-    </div>
+    />
   );
 }
