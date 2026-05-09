@@ -12,13 +12,21 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
   const pathname = usePathname();
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Restore focus to the trigger when transitioning from open → closed.
+      if (wasOpen.current) triggerRef.current?.focus();
+      wasOpen.current = false;
+      return;
+    }
+    wasOpen.current = true;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
@@ -34,6 +42,7 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sage-800 hover:bg-sage-100 md:hidden"
         aria-expanded={open}

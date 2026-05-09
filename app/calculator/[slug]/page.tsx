@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { calcCover } from "@kdp/calc";
 import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
 import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid, pageCountBounds } from "@kdp/limits";
+import { encodeState } from "@kdp/share";
 import { CoverDiagram } from "@/components/calculator/CoverDiagram";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
 
@@ -133,7 +134,7 @@ export default async function PseoPage({ params }: Params) {
 
       <p className="mt-8 text-xs text-sage-700">
         Need a different config?{" "}
-        <Link href={`/#s=`} className="underline hover:text-warm-500">
+        <Link href={`/#s=${encodeState(parsed)}`} className="underline hover:text-warm-500">
           Open the live calculator →
         </Link>
       </p>

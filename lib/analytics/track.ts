@@ -8,6 +8,8 @@ export type AnalyticsEvent =
       name: "calculate";
       props: { format: Format; paper: Paper; pageBucket: string };
     }
+  | { name: "format_changed"; props: { format: Format } }
+  | { name: "paper_changed"; props: { paper: Paper } }
   | { name: "share_link_copied"; props: Record<string, never> }
   | { name: "embed_snippet_copied"; props: Record<string, never> }
   | { name: "template_downloaded"; props: { format: Format } }

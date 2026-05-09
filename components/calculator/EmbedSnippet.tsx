@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Code } from "lucide-react";
 import { track } from "@/lib/analytics/track";
 
@@ -14,8 +14,21 @@ const SNIPPET = `<iframe src="https://kdpcover.pro/embed?theme=light"
   }
 });</script>`;
 
-export function EmbedSnippet() {
+type Props = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export function EmbedSnippet({ open, onOpenChange }: Props) {
   const [copied, setCopied] = useState(false);
+  const ref = useRef<HTMLDetailsElement>(null);
+  const controlled = open !== undefined;
+
+  useEffect(() => {
+    if (!controlled || !ref.current) return;
+    if (ref.current.open !== open) ref.current.open = !!open;
+  }, [open, controlled]);
+
   const onCopy = async () => {
     await navigator.clipboard.writeText(SNIPPET);
     track({ name: "embed_snippet_copied", props: {} });
@@ -24,7 +37,15 @@ export function EmbedSnippet() {
   };
 
   return (
-    <details className="rounded-card border border-sage-200 bg-white">
+    <details
+      ref={ref}
+      id="embed-snippet-panel"
+      className="rounded-card border border-sage-200 bg-white"
+      onToggle={(e) => {
+        const next = (e.currentTarget as HTMLDetailsElement).open;
+        if (controlled && next !== open) onOpenChange?.(next);
+      }}
+    >
       <summary className="flex cursor-pointer items-center gap-2 px-5 py-4 text-sm font-medium text-sage-800">
         <Code className="h-4 w-4" aria-hidden /> Embed this calculator on your site
       </summary>

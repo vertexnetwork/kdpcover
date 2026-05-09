@@ -1,26 +1,29 @@
 import { Calculator } from "@/components/calculator/Calculator";
 import { siteFacts } from "@/lib/content/site-facts";
 import { faqJsonLd, softwareAppJsonLd, organizationJsonLd } from "@/lib/seo/jsonld";
-import { AdSlot } from "@/components/site/AdSlot";
+import { DeferredAdSlot } from "@/components/site/DeferredAdSlot";
+import { ShieldCheck } from "lucide-react";
 
 export default function HomePage() {
   return (
     <>
-      <section className="mx-auto max-w-6xl px-4 pb-12 pt-10 sm:px-6 sm:pt-16">
-        <div className="mb-8 max-w-2xl">
-          <h1 className="text-4xl leading-tight sm:text-5xl">
+      <section className="mx-auto max-w-6xl px-4 pb-12 pt-6 sm:px-6 sm:pt-12">
+        <div className="mb-5 max-w-2xl sm:mb-8">
+          <h1 className="text-3xl leading-tight sm:text-5xl">
             Pass KDP&rsquo;s review on the first try.
           </h1>
-          <p className="mt-4 text-base text-sage-800 sm:text-lg">
-            Precision spine width, full-cover dimensions, and safe-zone diagrams for
-            Amazon paperback and case-laminate hardcover books. All math is local
-            to your browser — no upload, no account.
+          <p className="mt-3 text-sm text-sage-800 sm:text-lg">
+            Spine width, full-cover dimensions, and safe-zone diagrams — instant, in-browser.
+          </p>
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-sage-200 bg-sage-50 px-2.5 py-1 text-xs text-sage-800">
+            <ShieldCheck className="h-3.5 w-3.5 text-sage-600" aria-hidden />
+            Multipliers verified against KDP&rsquo;s official template generator
           </p>
         </div>
 
         <Calculator />
 
-        <AdSlot slot="below-results" className="mt-8" />
+        <DeferredAdSlot slot="below-results" className="mt-8" />
       </section>
 
       <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">

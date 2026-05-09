@@ -14,7 +14,7 @@ import { CoverDiagram } from "./CoverDiagram";
 import { EmbedSnippet } from "./EmbedSnippet";
 import { ShareButton } from "./ShareButton";
 import { pageBucket, track } from "@/lib/analytics/track";
-import { Copy, Download } from "lucide-react";
+import { AlertTriangle, Code, Copy, Download } from "lucide-react";
 import { clsx } from "clsx";
 
 type Props = {
@@ -33,9 +33,15 @@ const DEFAULT: CoverInput = {
   trimHeightIn: 9,
 };
 
+const NOTICE_MS = 3500;
+const CALCULATE_DEBOUNCE_MS = 500;
+
 export function Calculator({ initial, compact, silent }: Props) {
   const [state, setState] = useState<CoverInput>(() => ({ ...DEFAULT, ...initial }));
   const [hydrated, setHydrated] = useState(false);
+  const [customMode, setCustomMode] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [embedOpen, setEmbedOpen] = useState(false);
 
   // Hydrate from URL hash once on mount.
   useEffect(() => {
@@ -52,6 +58,17 @@ export function Calculator({ initial, compact, silent }: Props) {
     }
     setHydrated(true);
   }, [silent]);
+
+  // After hydration, sync customMode if the loaded trim isn't a preset.
+  useEffect(() => {
+    if (!hydrated) return;
+    const isPreset = trimsForFormat(state.format).some(
+      (t) => t.widthIn === state.trimWidthIn && t.heightIn === state.trimHeightIn,
+    );
+    if (!isPreset) setCustomMode(true);
+    // Intentionally only re-run when hydration flips.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
 
   // Debounced hash sync.
   const hashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -71,46 +88,97 @@ export function Calculator({ initial, compact, silent }: Props) {
   }, [state, hydrated, silent]);
 
   const out = useMemo(() => calcCover(state), [state]);
-  const calcFiredRef = useRef(false);
+
+  // Auto-clear notices.
   useEffect(() => {
-    if (!hydrated || calcFiredRef.current) return;
-    calcFiredRef.current = true;
-    track({
-      name: "calculate",
-      props: {
-        format: state.format,
-        paper: state.paper,
-        pageBucket: pageBucket(state.pageCount),
-      },
-    });
-  }, [hydrated, state.format, state.paper, state.pageCount]);
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(null), NOTICE_MS);
+    return () => clearTimeout(t);
+  }, [notice]);
+
+  // Debounced `calculate` event — fires per settled change so funnels stay measurable.
+  const calcEventTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const firstCalcDispatched = useRef(false);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (calcEventTimer.current) clearTimeout(calcEventTimer.current);
+    calcEventTimer.current = setTimeout(() => {
+      track({
+        name: "calculate",
+        props: {
+          format: state.format,
+          paper: state.paper,
+          pageBucket: pageBucket(state.pageCount),
+        },
+      });
+      if (!firstCalcDispatched.current) {
+        firstCalcDispatched.current = true;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("kdpcover:calculated"));
+        }
+      }
+    }, CALCULATE_DEBOUNCE_MS);
+    return () => {
+      if (calcEventTimer.current) clearTimeout(calcEventTimer.current);
+    };
+  }, [hydrated, state.format, state.paper, state.pageCount, state.trimWidthIn, state.trimHeightIn]);
 
   const trims = trimsForFormat(state.format);
   const papers = paperOptionsForFormat(state.format);
   const bounds = pageCountBounds(state.format);
 
   const setFormat = (format: Format) => {
+    if (format === state.format) return;
     setState((s) => {
       const next = { ...s, format };
       const allowedTrims = trimsForFormat(format);
-      if (!allowedTrims.some((t) => t.widthIn === s.trimWidthIn && t.heightIn === s.trimHeightIn)) {
+      const trimStillValid = allowedTrims.some(
+        (t) => t.widthIn === s.trimWidthIn && t.heightIn === s.trimHeightIn,
+      );
+      if (!trimStillValid && !customMode) {
         next.trimWidthIn = allowedTrims[0].widthIn;
         next.trimHeightIn = allowedTrims[0].heightIn;
+        setNotice(
+          `${s.trimWidthIn}″ × ${s.trimHeightIn}″ isn't supported on ${FORMAT_LABEL[format].toLowerCase()} — switched to ${allowedTrims[0].label}.`,
+        );
       }
       const b = pageCountBounds(format);
-      next.pageCount = Math.min(b.max, Math.max(b.min, s.pageCount));
+      const clampedPages = Math.min(b.max, Math.max(b.min, s.pageCount));
+      if (clampedPages !== s.pageCount) {
+        next.pageCount = clampedPages;
+        setNotice(
+          `${FORMAT_LABEL[format]} supports ${b.min}–${b.max} pages — adjusted to ${clampedPages}.`,
+        );
+      }
       return next;
     });
+    track({ name: "format_changed", props: { format } });
   };
 
-  const setPaper = (paper: Paper) => setState((s) => ({ ...s, paper }));
-  const setPages = (n: number) =>
-    setState((s) => ({
-      ...s,
-      pageCount: Math.min(bounds.max, Math.max(bounds.min, Math.round(n))),
-    }));
+  const setPaper = (paper: Paper) => {
+    if (paper === state.paper) return;
+    setState((s) => ({ ...s, paper }));
+    track({ name: "paper_changed", props: { paper } });
+  };
+
+  const setPages = (raw: number) => {
+    if (!Number.isFinite(raw)) return;
+    const rounded = Math.round(raw);
+    const clamped = Math.min(bounds.max, Math.max(bounds.min, rounded));
+    if (clamped !== rounded) {
+      setNotice(
+        `${FORMAT_LABEL[state.format]} supports ${bounds.min}–${bounds.max} pages — clamped to ${clamped}.`,
+      );
+    }
+    setState((s) => ({ ...s, pageCount: clamped }));
+  };
+
   const setTrim = (slug: string) => {
-    if (slug === "custom") return;
+    if (slug === "custom") {
+      setCustomMode(true);
+      return;
+    }
+    setCustomMode(false);
     const found = trims.find((t) => t.slug === slug);
     if (found)
       setState((s) => ({
@@ -120,8 +188,10 @@ export function Calculator({ initial, compact, silent }: Props) {
       }));
   };
 
-  const currentTrimSlug =
-    trims.find((t) => t.widthIn === state.trimWidthIn && t.heightIn === state.trimHeightIn)?.slug ?? "custom";
+  const matchedPreset = trims.find(
+    (t) => t.widthIn === state.trimWidthIn && t.heightIn === state.trimHeightIn,
+  );
+  const currentTrimSlug = customMode || !matchedPreset ? "custom" : matchedPreset.slug;
 
   const copyValues = async () => {
     const text = `Spine width: ${out.spineWidthIn}″ (${out.spineWidthMm} mm)\nFull cover: ${out.fullCoverWidthIn}″ × ${out.fullCoverHeightIn}″ (${out.fullCoverWidthMm} mm × ${out.fullCoverHeightMm} mm)`;
@@ -139,11 +209,12 @@ export function Calculator({ initial, compact, silent }: Props) {
               { value: "paperback", label: FORMAT_LABEL.paperback },
               { value: "hardcover", label: FORMAT_LABEL.hardcover },
             ]}
+            ariaLabel="Format"
           />
         </Fieldset>
 
         <Fieldset legend="Paper">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div role="radiogroup" aria-label="Paper" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {papers.map((p) => (
               <RadioCard
                 key={p}
@@ -199,6 +270,7 @@ export function Calculator({ initial, compact, silent }: Props) {
               value={state.pageCount}
               onChange={(e) => setPages(Number(e.target.value))}
               className="flex-1 accent-warm-400"
+              aria-label="Page count slider"
             />
             <input
               type="number"
@@ -207,9 +279,21 @@ export function Calculator({ initial, compact, silent }: Props) {
               value={state.pageCount}
               onChange={(e) => setPages(Number(e.target.value))}
               className="tabular w-24 rounded-md border border-sage-200 bg-white px-3 py-2 text-right text-sm focus:border-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-200"
+              aria-label="Page count"
             />
           </div>
         </Fieldset>
+
+        {notice && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-2 flex items-start gap-2 rounded-md border border-warm-200 bg-warm-100 px-3 py-2 text-xs text-warm-700"
+          >
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span>{notice}</span>
+          </div>
+        )}
       </div>
 
       <div className={clsx("flex flex-col gap-4")}>
@@ -223,7 +307,7 @@ export function Calculator({ initial, compact, silent }: Props) {
               </div>
               <div className="tabular text-sm text-sage-700">{out.spineWidthMm.toFixed(2)} mm</div>
             </div>
-            <SpineTextBadge eligible={out.spineTextEligible} />
+            <SpineTextBadge eligible={out.spineTextEligible} pageCount={state.pageCount} />
           </div>
 
           <dl className="mt-4 grid grid-cols-2 gap-y-2 text-sm">
@@ -250,11 +334,20 @@ export function Calculator({ initial, compact, silent }: Props) {
               </button>
               <ShareButton state={state} />
               <DownloadSvgButton input={state} />
+              <button
+                type="button"
+                onClick={() => setEmbedOpen((o) => !o)}
+                aria-expanded={embedOpen}
+                aria-controls="embed-snippet-panel"
+                className="inline-flex items-center gap-1.5 rounded-md border border-sage-200 bg-white px-3 py-2 text-sm hover:border-warm-400"
+              >
+                <Code className="h-4 w-4" aria-hidden /> Embed
+              </button>
             </div>
           )}
         </div>
 
-        {!compact && <EmbedSnippet />}
+        {!compact && <EmbedSnippet open={embedOpen} onOpenChange={setEmbedOpen} />}
       </div>
     </div>
   );
@@ -275,28 +368,50 @@ function SegmentedControl<T extends string>({
   value,
   onChange,
   options,
+  ariaLabel,
 }: {
   value: T;
   onChange: (v: T) => void;
   options: { value: T; label: string }[];
+  ariaLabel?: string;
 }) {
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
+    e.preventDefault();
+    let nextIdx = idx;
+    if (e.key === "ArrowLeft") nextIdx = (idx - 1 + options.length) % options.length;
+    if (e.key === "ArrowRight") nextIdx = (idx + 1) % options.length;
+    if (e.key === "Home") nextIdx = 0;
+    if (e.key === "End") nextIdx = options.length - 1;
+    onChange(options[nextIdx].value);
+    refs.current[nextIdx]?.focus();
+  };
   return (
-    <div role="radiogroup" className="inline-flex rounded-md bg-sage-100 p-1">
-      {options.map((o) => (
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value === o.value}
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={clsx(
-            "rounded-md px-3 py-1.5 text-sm transition-colors",
-            value === o.value ? "bg-white shadow-sm" : "text-sage-800 hover:text-warm-500",
-          )}
-        >
-          {o.label}
-        </button>
-      ))}
+    <div role="radiogroup" aria-label={ariaLabel} className="inline-flex rounded-md bg-sage-100 p-1">
+      {options.map((o, i) => {
+        const selected = value === o.value;
+        return (
+          <button
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            tabIndex={selected ? 0 : -1}
+            key={o.value}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            onClick={() => onChange(o.value)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+            className={clsx(
+              "rounded-md px-3 py-1.5 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-200",
+              selected ? "bg-white shadow-sm" : "text-sage-800 hover:text-warm-500",
+            )}
+          >
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -315,12 +430,27 @@ function RadioCard({
       className={clsx(
         "cursor-pointer rounded-md border px-3 py-2 text-sm transition-colors",
         checked
-          ? "border-warm-400 bg-warm-50 text-ink"
+          ? "border-sage-400 bg-sage-50 text-ink"
           : "border-sage-200 bg-white hover:border-sage-300",
       )}
     >
-      <input type="radio" checked={checked} onChange={onChange} className="sr-only" />
-      {label}
+      <input
+        type="radio"
+        checked={checked}
+        onChange={onChange}
+        className="sr-only"
+        aria-label={label}
+      />
+      <span className="flex items-center gap-2">
+        <span
+          aria-hidden
+          className={clsx(
+            "inline-block h-2.5 w-2.5 rounded-full border",
+            checked ? "border-sage-500 bg-sage-500" : "border-sage-300 bg-white",
+          )}
+        />
+        {label}
+      </span>
     </label>
   );
 }
@@ -356,17 +486,19 @@ function NumberInput({
   );
 }
 
-function SpineTextBadge({ eligible }: { eligible: boolean }) {
+function SpineTextBadge({ eligible, pageCount }: { eligible: boolean; pageCount: number }) {
+  if (eligible) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-sage-100 px-2.5 py-1 text-xs font-medium text-sage-800">
+        Spine text OK
+      </span>
+    );
+  }
+  const need = 79 - pageCount;
   return (
-    <span
-      className={clsx(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-        eligible
-          ? "bg-sage-100 text-sage-800"
-          : "bg-warm-50 text-warm-700",
-      )}
-    >
-      {eligible ? "Spine text OK" : "Spine too narrow for text"}
+    <span className="inline-flex items-center gap-1 rounded-full bg-warm-100 px-2.5 py-1 text-xs font-medium text-warm-700">
+      <AlertTriangle className="h-3 w-3" aria-hidden />
+      Spine too narrow — needs ≥79 pages{need > 0 ? ` (+${need})` : ""}
     </span>
   );
 }

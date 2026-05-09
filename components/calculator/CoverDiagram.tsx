@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import type { CoverInput, CoverCalcOutput } from "@kdp/calc";
 import { clsx } from "clsx";
 
@@ -36,14 +37,20 @@ export function CoverDiagram({ input, output, className }: Props) {
   // Safe zone insets, drawn relative to the trim panels.
   const safeInset = format === "paperback" ? 0.125 : 0.635;
 
+  const titleId = useId();
+  const descId = useId();
+  const description = `${format === "paperback" ? "Paperback" : "Hardcover"} cover layout. Trim ${input.trimWidthIn} by ${input.trimHeightIn} inches. Spine width ${output.spineWidthIn.toFixed(4)} inches (${output.spineWidthMm.toFixed(2)} mm). Full cover ${output.fullCoverWidthIn.toFixed(4)} by ${output.fullCoverHeightIn.toFixed(4)} inches. Diagram shows back panel, spine, front panel, safe-zone insets, and barcode placement on back cover.`;
+
   return (
     <svg
       role="img"
-      aria-label="Cover layout diagram"
+      aria-labelledby={`${titleId} ${descId}`}
       viewBox={`0 0 ${vbW} ${vbH}`}
       className={clsx("block w-full max-w-full rounded-md bg-sage-50", className)}
       preserveAspectRatio="xMidYMid meet"
     >
+      <title id={titleId}>Cover layout diagram</title>
+      <desc id={descId}>{description}</desc>
       {/* Bleed / outer cover bounds */}
       <rect
         x={ox}
