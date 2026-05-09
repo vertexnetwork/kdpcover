@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sage-50: #f4f6f0;
+  --color-sage-100: #e7ecdc;
+  --color-sage-200: #cdd9b8;
+  --color-sage-300: #b3c595;
+  --color-sage-400: #9caf88;
+  --color-sage-500: #82986d;
+  --color-sage-600: #687a55;
+  --color-sage-700: #4f5d40;
+  --color-sage-800: #36402c;
+  --color-sage-900: #1f2421;
+
+  --color-ivory: #fffff0;
+  --color-ink: #1f2421;
+  --color-warm-50: #fbf2ee;
+  --color-warm-100: #f3dcd1;
+  --color-warm-200: #e6b9a3;
+  --color-warm-300: #d99776;
+  --color-warm-400: #c97b5c;
+  --color-warm-500: #b15d3d;
+  --color-warm-600: #8d4830;
+  --color-warm-700: #693523;
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 0.75rem;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--color-sage-200);
+    color: var(--color-ink);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 0.5rem 0.75rem;
+    z-index: 100;
+  }
+  .skip-link:focus {
+    left: 0.5rem;
+    top: 0.5rem;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

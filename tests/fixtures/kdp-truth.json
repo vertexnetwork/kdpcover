@@ -1,0 +1,17 @@
+{
+  "_comment": "Golden values — initial seed matches KDP's documented multipliers. Replace any row with values from KDP's official cover-template generator (https://kdp.amazon.com/cover-calculator) before launch to lock in real-world parity.",
+  "cases": [
+    { "format": "paperback", "paper": "white",          "pageCount": 100, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.2252, "expectedFullW": 12.4752, "expectedFullH": 9.25 },
+    { "format": "paperback", "paper": "cream",          "pageCount": 100, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.25,   "expectedFullW": 12.5,    "expectedFullH": 9.25 },
+    { "format": "paperback", "paper": "color-standard", "pageCount": 100, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.2252, "expectedFullW": 12.4752, "expectedFullH": 9.25 },
+    { "format": "paperback", "paper": "color-premium",  "pageCount": 100, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.2347, "expectedFullW": 12.4847, "expectedFullH": 9.25 },
+    { "format": "paperback", "paper": "white",          "pageCount": 300, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.6756, "expectedFullW": 12.9256, "expectedFullH": 9.25 },
+    { "format": "paperback", "paper": "cream",          "pageCount": 300, "trimWidthIn": 5.5, "trimHeightIn": 8.5, "expectedSpineIn": 0.75,   "expectedFullW": 12,      "expectedFullH": 8.75 },
+    { "format": "paperback", "paper": "white",          "pageCount": 24,  "trimWidthIn": 5,   "trimHeightIn": 8,   "expectedSpineIn": 0.054,  "expectedFullW": 10.304,  "expectedFullH": 8.25 },
+    { "format": "paperback", "paper": "white",          "pageCount": 828, "trimWidthIn": 8.5, "trimHeightIn": 11,  "expectedSpineIn": 1.8647, "expectedFullW": 19.1147, "expectedFullH": 11.25 },
+    { "format": "paperback", "paper": "color-premium",  "pageCount": 220, "trimWidthIn": 8.5, "trimHeightIn": 11,  "expectedSpineIn": 0.5163, "expectedFullW": 17.7663, "expectedFullH": 11.25 },
+    { "format": "hardcover", "paper": "white",          "pageCount": 100, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.2347, "expectedFullW": 14.0547, "expectedFullH": 10.02 },
+    { "format": "hardcover", "paper": "cream",          "pageCount": 200, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 0.4694, "expectedFullW": 14.2894, "expectedFullH": 10.02 },
+    { "format": "hardcover", "paper": "color-premium",  "pageCount": 550, "trimWidthIn": 6,   "trimHeightIn": 9,   "expectedSpineIn": 1.2909, "expectedFullW": 15.1109, "expectedFullH": 10.02 }
+  ]
+}
