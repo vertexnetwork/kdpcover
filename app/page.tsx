@@ -1,7 +1,6 @@
 import { Calculator } from "@/components/calculator/Calculator";
 import { siteFacts } from "@/lib/content/site-facts";
 import { faqJsonLd, softwareAppJsonLd, organizationJsonLd } from "@/lib/seo/jsonld";
-import { DeferredAdSlot } from "@/components/site/DeferredAdSlot";
 import { MultiplierTable } from "@/components/site/MultiplierTable";
 import { ProofStrip } from "@/components/site/ProofStrip";
 import { ShieldCheck } from "lucide-react";
@@ -29,8 +28,6 @@ export default function HomePage() {
         <Calculator />
 
         <ProofStrip />
-
-        <DeferredAdSlot slot="below-results" className="mt-10" />
       </section>
 
       <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">

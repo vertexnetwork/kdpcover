@@ -123,11 +123,10 @@ app/
 
 components/
 ├── calculator/                              # Calculator + diagram + share/embed/upsell
-├── site/                                    # Header, Footer, Analytics, AdSlot, etc.
+├── site/                                    # Header, Footer, Analytics, ProofStrip, etc.
 └── templates/                               # ProductCard, BuyButton
 
 lib/
-├── ads/                                     # ad-slot config
 ├── analytics/track.ts                       # typed Vercel Analytics events
 ├── content/                                 # site-facts, recommendations, network, changelog
 ├── kdp/                                     # pure calc engine, limits, slug, svg-template

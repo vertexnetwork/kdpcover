@@ -3,7 +3,6 @@ import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
-const ADSENSE_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
 export function Analytics() {
   return (
@@ -18,14 +17,6 @@ export function Analytics() {
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
           })(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
         </Script>
-      ) : null}
-      {ADSENSE_CLIENT_ID ? (
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       ) : null}
     </>
   );

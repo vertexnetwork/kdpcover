@@ -15,16 +15,20 @@ Independent authors and cover designers routinely fail KDP's automated cover-upl
 - **Freelance cover designers** who need to spot-check client specs before laying out artwork.
 - **Tier-1 geographic skew** (US/UK/CA/AU) → strong RPM.
 
-### 1.3 Niche & RPM
-B2B publishing / digital design. Mediavine target RPM $6–$20, base case $12–$15.
+### 1.3 Niche & monetisation
+B2B publishing / digital design. Monetised by direct sale of KDP-spec
+template bundles ($19 / $49 / $99) via Lemon Squeezy, plus passive
+affiliate referrals on `/recommended`. **No display advertising.**
 
-| Scenario | PVs / mo | RPM | Earnings |
-|---|---|---|---|
-| Min | 5,000 | $6 | $30 |
-| Avg | 20,000 | $12 | $240 |
-| Max | 50,000 | $20 | $1,000 |
+Per-visitor economics (1.5% conversion × $32 AOV ≈ $0.48 EPC) materially
+beat any display-ad alternative at this niche's traffic scale, so ads
+are dropped entirely until the store proves out.
 
-Path-to-$200/mo break-even: ~13,300 monthly PVs at $15 RPM.
+| Scenario | PVs / mo | Conv | AOV | Earnings |
+|---|---|---|---|---|
+| Min  | 5,000  | 0.8% | $25 | $100 |
+| Avg  | 20,000 | 1.5% | $32 | $960 |
+| Max  | 50,000 | 2.0% | $40 | $4,000 |
 
 ### 1.4 Brand
 - **Palette:** Modern Earth Tones — Sage Green (`#9CAF88`), Ivory (`#FFFFF0`), Ink (`#1F2421`), Warm Accent (`#C97B5C`).
@@ -52,7 +56,7 @@ Path-to-$200/mo break-even: ~13,300 monthly PVs at $15 RPM.
 | Persistence | **None** | All state in URL hash → no DB, no PII, no cold starts |
 | Icons | lucide-react | Tree-shakeable |
 | Analytics | Vercel Analytics + Speed Insights + Microsoft Clarity | Clarity for heatmaps/replay |
-| Ads | Mediavine (Journey tier at launch) | Slots reserved at build time to keep CLS = 0 |
+| Checkout | Lemon Squeezy (hosted) | Anonymous, EU-VAT handled, instant-download delivery |
 | Linting | ESLint + Prettier + TypeScript strict | Husky pre-commit |
 
 ### 2.2 Calculator Engine — Authoritative Formulas
@@ -149,7 +153,7 @@ app/
 ├── sitemap.ts                        # generateSitemaps shard function
 ├── robots.ts
 ├── manifest.ts                       # PWA manifest
-└── layout.tsx                        # global layout, analytics, Mediavine script
+└── layout.tsx                        # global layout, analytics, service worker registration
 public/
 ├── llms.txt                          # GEO summary (see §2.10)
 ├── llms-full.txt                     # GEO full content
@@ -260,7 +264,7 @@ The site is structured for citation by AI search (Perplexity, ChatGPT search, Ge
 - **Sitemap:** `app/sitemap.ts` with `generateSitemaps` shard function returning multiple sitemaps under a sitemap index. Single sitemap for now (~3.5k URLs ≪ 50k limit); shard threshold is 45k.
 - **`robots.ts`:** allow all, disallow `/api/og` and `/share/*` (low-value duplicate content), reference sitemap.
 - **Meta:** unique `<title>` and `<meta description>` per pSEO page templated from `{format} {paper} {pages} pages` data.
-- **Core Web Vitals targets:** LCP < 2.0s, CLS < 0.1, INP < 200ms (Mediavine Journey re-audits these quarterly).
+- **Core Web Vitals targets:** LCP < 2.0s, CLS < 0.1, INP < 200ms.
 - **Bundle budget:** initial JS < 100 KB gzipped on the calculator route.
 
 ### 2.12 Analytics
@@ -275,22 +279,30 @@ The site is structured for citation by AI search (Perplexity, ChatGPT search, Ge
   - `pwa_installed`
 - **No GA4** — duplicates Vercel/Clarity coverage and adds bundle weight.
 
-### 2.13 Monetization (Mediavine)
+### 2.13 Monetisation (template store)
 
-- **Tier:** Mediavine Journey at launch (entry-level; replaces older 50k-session threshold). Targets 10k+ monthly sessions.
-- **Slots** (all with reserved `min-height` containers — CLS = 0):
-  1. **In-content / below-results** (`min-h-[280px]`) — primary slot, fires only after a calculation
-  2. **Mid-content** between SVG diagram and explainer text (`min-h-[250px]`)
-  3. **Sidebar** on `lg:` and up (`min-h-[600px] sticky top-24`)
-- **No above-fold ads** on `/` — calculator is the LCP element and we protect it.
-- **No ads on `/embed`** — embed is an acquisition surface; ads run on the host.
-- **Pre-Mediavine fallback:** Ezoic or AdSense from day 1 to monetize the ramp; swap to Mediavine on approval.
+- **Catalog:** three SKUs in `lib/templates/catalog.ts` — Single ($19) /
+  Universal ($49, hero) / Mega ($99). Edits to that file propagate to the
+  store hub, product pages, calculator upsell, and pSEO upsell.
+- **Checkout:** Lemon Squeezy hosted variant URLs, env-driven via
+  `NEXT_PUBLIC_LS_VARIANT_*`. If unset, the buy button gracefully falls
+  back to "Notify me" so the SEO surface still ships.
+- **Funnel surfaces:**
+  1. `/` — `TemplateUpsell` after a calculation
+  2. `/calculator/[slug]` — `PseoTemplateCta` on every long-tail page
+  3. `/templates` and `/templates/[slug]` — direct purchase
+- **Affiliate stack** — `/recommended` resolves env-driven affiliate IDs
+  for Atticus, Publisher Rocket, Book Bolt, Reedsy, Canva, BookBrush.
+- **No display advertising.** `ads.txt` and `app-ads.txt` are kept as
+  static placeholders for future re-introduction.
 
 ### 2.14 Privacy & Compliance
 
-- No PII collected. All state client-side.
-- Cookie banner only when Mediavine/AdSense load (their consent management platform handles GDPR/CCPA).
-- Privacy policy linked in footer; auto-generated from a template, lists Vercel, Clarity, Mediavine as data processors.
+- No PII collected. All calculator state lives client-side.
+- No advertising → no consent banner required.
+- Lemon Squeezy and Microsoft Clarity are listed as data processors in
+  the privacy policy. Lemon Squeezy cookies are only set after the buyer
+  clicks a buy button.
 
 ### 2.15 Performance Budget
 
@@ -332,13 +344,16 @@ Next.js 15 init, Tailwind v4, Vercel link, GitHub repo, Husky, ESLint/Prettier, 
 **Phase 4 — GEO + PWA (days 12–13)**
 `/llms.txt` + `/llms-full.txt` · `manifest.ts` · `sw.js` · install-prompt UX.
 
-**Phase 5 — Analytics + Ads (days 14–15)**
-Vercel Analytics + Speed Insights · Clarity script · AdSense/Ezoic placeholders with reserved containers · privacy policy.
+**Phase 5 — Analytics + privacy (days 14–15)**
+Vercel Analytics + Speed Insights · Clarity script · privacy policy.
 
 **Phase 6 — Launch hardening (days 16–17)**
 Lighthouse CI · Playwright smoke + visual regression · embed-snippet kit for 5 design blogs.
 
-**Post-launch:** apply to Mediavine Journey at first 10k-session month; swap ad provider.
+**Phase 7 — Template store (days 18–20)**
+`/templates` hub + `/templates/[slug]` product pages · `lib/templates/catalog.ts` SKU ladder · `BuyButton` with Lemon Squeezy hosted-checkout URLs · `TemplateUpsell` surfaced in calculator and pSEO routes · `scripts/build-templates.ts` deliverable pipeline · affiliate IDs wired on `/recommended`.
+
+**Post-launch:** monitor template-store EPC. If conversion < 0.8% after 30 days at ≥10k PVs, revisit display-ad reintroduction.
 
 ### 3.2 Verification
 

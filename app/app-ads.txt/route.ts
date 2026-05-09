@@ -1,8 +1,7 @@
 export const dynamic = "force-static";
 
 const BODY = [
-  "# kdpcover.pro — no authorised ad sellers at this time.",
-  "# Site is monetised via the digital template store, not display ads.",
+  "# kdpcover.pro — no authorised in-app ad sellers at this time.",
   "# This file is reserved for future re-introduction of ad inventory.",
 ].join("\n") + "\n";
 
