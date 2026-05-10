@@ -35,4 +35,12 @@ export const networkTools: NetworkTool[] = [
     audience: "Creators on TikTok, Reels, and Shorts",
     status: "live",
   },
+  {
+    name: "tokenmath.dev",
+    url: "https://tokenmath.dev",
+    description:
+      "In-browser tokeniser and API-cost comparator for Claude, Gemini, and OpenAI. Paste a prompt, see token counts and per-model pricing side-by-side — no upload, no account.",
+    audience: "Developers and teams budgeting LLM API spend",
+    status: "live",
+  },
 ];
