@@ -5,7 +5,12 @@ export const metadata = {
   description: "Tools in the Vertex Network — focused, fast, free utilities for indie publishers, sellers, and creators.",
 };
 
+// Hide the current site from its own /network — visitors are already here.
+// The data array stays the canonical list so it's portable to sister sites.
+const CURRENT_SITE = "kdpcover.pro";
+
 export default function NetworkPage() {
+  const others = networkTools.filter((t) => t.name !== CURRENT_SITE);
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="text-3xl sm:text-4xl">Vertex Network</h1>
@@ -14,7 +19,7 @@ export default function NetworkPage() {
       </p>
 
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-        {networkTools.map((t) => (
+        {others.map((t) => (
           <li key={t.url} className="flex flex-col rounded-card border border-sage-200 bg-white p-5">
             <div className="flex items-start justify-between gap-3">
               <h2 className="text-lg font-medium">{t.name}</h2>
