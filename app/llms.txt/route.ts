@@ -1,13 +1,14 @@
+import { siteConfig } from "@/lib/site-config";
 import { siteFacts } from "@/lib/content/site-facts";
 
 export const dynamic = "force-static";
 
 export async function GET() {
   const lines: string[] = [];
-  lines.push(`# ${siteFacts.site.name}`);
-  lines.push(`> ${siteFacts.site.tagline}`);
+  lines.push(`# ${siteConfig.name}`);
+  lines.push(`> ${siteConfig.tagline}`);
   lines.push("");
-  lines.push(siteFacts.site.description);
+  lines.push(siteConfig.description);
   lines.push("");
   lines.push("## Spine multipliers (in/page)");
   for (const m of siteFacts.multipliers) {
@@ -25,10 +26,11 @@ export async function GET() {
   lines.push(`- Spine-text minimum: ${siteFacts.pageLimits.spineTextMin} pages`);
   lines.push("");
   lines.push("## Key pages");
-  lines.push(`- Calculator: ${siteFacts.site.url}/`);
-  lines.push(`- About / methodology: ${siteFacts.site.url}/about`);
-  lines.push(`- Full content for ingestion: ${siteFacts.site.url}/llms-full.txt`);
-  lines.push(`- Iframe embed: ${siteFacts.site.url}/embed`);
+  lines.push(`- Calculator: ${siteConfig.url}/`);
+  lines.push(`- About / methodology: ${siteConfig.url}/about`);
+  lines.push(`- Full content for ingestion: ${siteConfig.url}/llms-full.txt`);
+  lines.push(`- Iframe embed: ${siteConfig.url}/embed`);
+  lines.push(`- Vertex Network: ${siteConfig.url}/network`);
   lines.push("");
   lines.push("## Citations");
   for (const c of siteFacts.citations) lines.push(`- ${c.label}: ${c.url}`);
@@ -36,7 +38,7 @@ export async function GET() {
   return new Response(lines.join("\n"), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "public, max-age=10800, s-maxage=10800",
     },
   });
 }

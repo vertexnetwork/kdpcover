@@ -10,7 +10,6 @@ type Props = {
   sku: Sku;
   /** Pre-resolved checkout URL from server. Null = not configured yet. */
   checkoutUrl: string | null;
-  /** Where the click came from — used for funnel analytics */
   source: "store-card" | "product-page" | "calculator-cta" | "pseo";
   size?: "default" | "lg";
   className?: string;
@@ -25,7 +24,7 @@ export function BuyButton({ sku, checkoutUrl, source, size = "default", classNam
         type="button"
         disabled={notified}
         onClick={() => {
-          track({ name: "template_notify_click", props: { sku: sku.slug, source } });
+          track({ name: "template_notify_click", props: { source } });
           setNotified(true);
         }}
         className={clsx(
@@ -44,12 +43,14 @@ export function BuyButton({ sku, checkoutUrl, source, size = "default", classNam
   return (
     <a
       href={checkoutUrl}
-      onClick={() => track({ name: "template_buy_click", props: { sku: sku.slug, source, price: sku.priceUsd } })}
+      onClick={() =>
+        track({ name: "template_buy_click", props: { source, price: sku.priceUsd } })
+      }
       target="_blank"
       rel="noopener"
       data-sku={sku.slug}
       className={clsx(
-        "group inline-flex items-center justify-center gap-2 rounded-md bg-ink font-medium text-white shadow-sm transition-colors hover:bg-warm-500 focus:outline-none focus:ring-2 focus:ring-warm-300",
+        "group inline-flex items-center justify-center gap-2 rounded-md bg-(--color-on-bg) font-medium text-(--color-on-accent) shadow-sm transition-colors hover:bg-(--color-accent) focus:outline-none focus:ring-2 focus:ring-warm-300",
         size === "lg" ? "px-5 py-3 text-base" : "px-4 py-2.5 text-sm",
         className,
       )}
@@ -63,7 +64,10 @@ export function BuyButton({ sku, checkoutUrl, source, size = "default", classNam
           </span>
         )}
       </span>
-      <ArrowRight className="h-4 w-4 opacity-70 transition-transform group-hover:translate-x-0.5" aria-hidden />
+      <ArrowRight
+        className="h-4 w-4 opacity-70 transition-transform group-hover:translate-x-0.5"
+        aria-hidden
+      />
     </a>
   );
 }

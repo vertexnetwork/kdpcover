@@ -1,6 +1,21 @@
 @import "tailwindcss";
 
 @theme {
+  /* Canonical Vertex tokens — mirrors siteConfig.theme.colors. Names are
+     network-wide; values are per-site. */
+  --color-bg: #fbf7eb;
+  --color-surface: #ffffff;
+  --color-accent: #c97b5c;
+  --color-on-bg: #1f2421;
+  --color-on-accent: #ffffff;
+  --color-muted: #82986d;
+  --color-border: #cdd9b8;
+  --color-success: #4f5d40;
+  --color-danger: #b15d3d;
+
+  /* Brand-specific palette retained for SPOKE components (cover diagram,
+     SVG templates, OG image) that need named shades. Keep these in sync
+     with siteConfig.theme + siteConfig.brand. */
   --color-sage-50: #f4f6f0;
   --color-sage-100: #e7ecdc;
   --color-sage-200: #cdd9b8;
@@ -11,7 +26,6 @@
   --color-sage-700: #4f5d40;
   --color-sage-800: #36402c;
   --color-sage-900: #1f2421;
-
   --color-ivory: #fbf7eb;
   --color-ink: #1f2421;
   --color-warm-50: #fbf2ee;
@@ -23,11 +37,35 @@
   --color-warm-600: #8d4830;
   --color-warm-700: #693523;
 
+  /* Typography */
   --font-display: "Instrument Serif", Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-display: 3.5rem;
+  --text-h1: 2.25rem;
+  --text-h2: 1.75rem;
+  --text-h3: 1.375rem;
 
+  /* Spacing — 44px touch-target floor */
+  --spacing-touch: 2.75rem;
+
+  /* Radius */
   --radius-card: 0.75rem;
+  --radius-pill: 9999px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 2px rgba(31, 36, 33, 0.04), 0 4px 12px rgba(31, 36, 33, 0.06);
+  --shadow-cta: 0 1px 2px rgba(31, 36, 33, 0.08), 0 6px 18px rgba(201, 123, 92, 0.18);
+
+  /* CLS-safe ad slot reserves (held in @theme so re-enabling ads later is
+     a one-env-var change — see siteConfig.features.ads.provider) */
+  --ad-slot-banner-h: 90px;
+  --ad-slot-rect-h: 250px;
+  --ad-slot-leaderboard-h: 90px;
+
+  /* Focus */
+  --focus-ring: 2px solid var(--color-accent);
 }
 
 @layer base {
@@ -36,9 +74,9 @@
   }
 
   html {
-    background-color: var(--color-ivory);
-    color: var(--color-ink);
-    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-on-bg);
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -47,7 +85,9 @@
     min-height: 100dvh;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.01em;
@@ -55,15 +95,20 @@
 
   ::selection {
     background-color: var(--color-sage-200);
-    color: var(--color-ink);
+    color: var(--color-on-bg);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
   }
 
   .skip-link {
     position: absolute;
     left: -9999px;
     top: 0;
-    background: var(--color-ink);
-    color: var(--color-ivory);
+    background: var(--color-on-bg);
+    color: var(--color-bg);
     padding: 0.5rem 0.75rem;
     z-index: 100;
   }

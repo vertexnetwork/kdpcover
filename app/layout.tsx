@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
-import { Header } from "@/components/site/Header";
-import { Footer } from "@/components/site/Footer";
+import { siteConfig } from "@/lib/site-config";
 import { Analytics } from "@/components/site/Analytics";
+import { Clarity } from "@/components/site/Clarity";
+import { ConsentProvider } from "@/components/consent/ConsentProvider";
+import { CookieConsent } from "@/components/consent/CookieConsent";
 import { SwRegister } from "@/components/site/SwRegister";
 import "./globals.css";
 
@@ -20,29 +22,32 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kdpcover.pro"),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "KDP Cover & Spine Width Calculator — kdpcover.pro",
-    template: "%s · kdpcover.pro",
+    default: `${siteConfig.tagline} — ${siteConfig.name}`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "Pass KDP's review on the first try. Precision spine width, full-cover dimensions, and safe-zone diagrams for Amazon paperback and case-laminate hardcover books.",
-  applicationName: "KDP Cover Calculator",
-  authors: [{ name: "kdpcover.pro", url: "https://kdpcover.pro" }],
-  keywords: [
-    "KDP cover calculator",
-    "Amazon KDP spine width",
-    "paperback cover dimensions",
-    "case laminate hardcover",
-    "kdp template generator alternative",
-  ],
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  keywords: [...siteConfig.keywords],
   openGraph: {
     type: "website",
-    siteName: "kdpcover.pro",
-    title: "KDP Cover & Spine Width Calculator",
-    description:
-      "Instant, precise KDP spine width and full-cover dimensions for paperback and hardcover.",
-    url: "https://kdpcover.pro",
+    siteName: siteConfig.name,
+    title: siteConfig.tagline,
+    description: siteConfig.description,
+    url: siteConfig.url,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.tagline,
+    description: siteConfig.description,
+  },
+  verification: {
+    google: siteConfig.verification.google,
+    other: siteConfig.verification.bing
+      ? { "msvalidate.01": siteConfig.verification.bing }
+      : undefined,
   },
   alternates: {
     canonical: "/",
@@ -50,29 +55,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#9CAF88",
+  themeColor: siteConfig.brand.markColor,
   width: "device-width",
   initialScale: 1,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-[var(--color-ivory)] text-[var(--color-ink)]">
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
-        <Header />
-        <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+      <body className="flex min-h-dvh flex-col bg-(--color-bg) text-(--color-on-bg)">
+        <ConsentProvider required={siteConfig.features.consent.required}>
           {children}
-        </main>
-        <Footer />
-        <Analytics />
-        <SwRegister />
+          <Analytics />
+          <Clarity />
+          <CookieConsent />
+          <SwRegister />
+        </ConsentProvider>
       </body>
     </html>
   );

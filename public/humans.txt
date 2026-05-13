@@ -1,0 +1,14 @@
+# humanstxt.org — credits + tools
+
+/* TEAM */
+Maintainer: ThatMovieGuy
+Site: https://kdpcover.pro
+
+/* THANKS */
+Vertex Network — https://github.com/vertexnetwork/hub
+
+/* SITE */
+Last update: 2026-05-12
+Standards: HTML5, CSS3
+Components: Next.js 15, React 19, Tailwind v4
+Software: Vercel, GitHub

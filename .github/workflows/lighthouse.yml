@@ -1,0 +1,11 @@
+name: Lighthouse
+
+on:
+  deployment_status:
+
+jobs:
+  lighthouse:
+    if: github.event.deployment_status.state == 'success'
+    uses: vertexnetwork/hub/.github/workflows/lighthouse.yml@v1
+    with:
+      url: ${{ github.event.deployment_status.target_url }}

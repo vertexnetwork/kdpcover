@@ -5,32 +5,39 @@ import type { Format, Paper } from "@kdp/calc";
 
 export type TemplateBuySource = "store-card" | "product-page" | "calculator-cta" | "pseo";
 
+type EmailSource = "about" | "guide" | "calculator" | "extension" | "templates";
+type AffiliatePlacement = "recommended-page" | "calculator-cta" | "footer";
+
 export type AnalyticsEvent =
-  | {
-      name: "calculate";
-      props: { format: Format; paper: Paper; pageBucket: string };
-    }
+  | { name: "calculate"; props: { format: Format; paper: Paper; pageBucket: string } }
   | { name: "format_changed"; props: { format: Format } }
   | { name: "paper_changed"; props: { paper: Paper } }
   | { name: "share_link_copied"; props: Record<string, never> }
   | { name: "embed_snippet_copied"; props: Record<string, never> }
   | { name: "template_downloaded"; props: { format: Format } }
   | { name: "pwa_installed"; props: Record<string, never> }
-  | {
-      name: "template_buy_click";
-      props: { sku: string; source: TemplateBuySource; price: number };
-    }
-  | {
-      name: "template_notify_click";
-      props: { sku: string; source: TemplateBuySource };
-    }
-  | {
-      name: "template_upsell_view";
-      props: { sku: string; source: TemplateBuySource };
-    };
+  | { name: "template_buy_click"; props: { source: TemplateBuySource; price: number } }
+  | { name: "template_notify_click"; props: { source: TemplateBuySource } }
+  | { name: "template_upsell_view"; props: { source: TemplateBuySource } }
+  | { name: "vertex_footer_opened"; props: Record<string, never> }
+  | { name: "subscribe_submit"; props: { source: EmailSource } }
+  | { name: "subscribe_success"; props: { source: EmailSource } }
+  | { name: "affiliate_click"; props: { provider: string; placement: AffiliatePlacement } };
 
-export function track<E extends AnalyticsEvent>(event: E) {
-  vercelTrack(event.name, event.props);
+/**
+ * Safe wrapper around `@vercel/analytics`. No-ops if the script never
+ * loaded (e.g., consent denied, ad blocker, dev mode).
+ */
+export function track<E extends AnalyticsEvent>(event: E): void {
+  try {
+    vercelTrack(event.name, event.props as Record<string, string | number | boolean | null>);
+  } catch {
+    /* no-op */
+  }
+}
+
+export function safeTrack<E extends AnalyticsEvent>(event: E): void {
+  track(event);
 }
 
 export function pageBucket(pages: number): string {

@@ -1,0 +1,28 @@
+* text=auto eol=lf
+
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.js    text eol=lf
+*.jsx   text eol=lf
+*.mjs   text eol=lf
+*.cjs   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.mdx   text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.svg   text eol=lf
+
+pnpm-lock.yaml      binary linguist-generated=true
+package-lock.json   binary linguist-generated=true
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.webp      binary
+*.ico       binary
+*.pdf       binary
+*.ttf       binary
+*.woff      binary
+*.woff2     binary

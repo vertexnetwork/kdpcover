@@ -25,7 +25,7 @@ export function ProductCard({ sku }: Props) {
       {sku.highlight && (
         <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-warm-500 px-2.5 py-0.5 text-xs font-medium text-white">
           <Star className="h-3 w-3" aria-hidden />
-          Most popular
+          Bestseller
         </span>
       )}
 

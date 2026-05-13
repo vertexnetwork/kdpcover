@@ -1,0 +1,4 @@
+# app-ads.txt — kdpcover.pro
+# Synced from vertexnetwork/hub/crawler/app-ads.txt
+# IAB app-ads.txt v1.1: https://iabtechlab.com/app-ads-txt
+# Stub served for crawler compatibility — no in-app ad inventory.

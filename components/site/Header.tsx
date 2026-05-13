@@ -1,31 +1,31 @@
 import Link from "next/link";
+import { siteConfig } from "@/lib/site-config";
 import { MobileMenu } from "./MobileMenu";
 
-export const NAV_LINKS = [
-  { href: "/", label: "Calculator" },
-  { href: "/templates", label: "Templates" },
-  { href: "/guide", label: "Guide" },
-  { href: "/recommended", label: "Recommended" },
-  { href: "/about", label: "About" },
-] as const;
-
 export function Header() {
+  const nav = siteConfig.nav.primary;
   return (
-    <header className="sticky top-0 z-40 border-b border-sage-200/60 bg-[var(--color-ivory)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-ivory)]/70">
+    <header className="sticky top-0 z-40 border-b border-(--color-border)/60 bg-(--color-bg)/85 backdrop-blur supports-[backdrop-filter]:bg-(--color-bg)/70">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-display text-xl">
-          <span aria-hidden className="block h-3 w-3 rounded-sm bg-warm-400" />
-          <span>kdpcover</span>
-          <span className="text-sage-600">.pro</span>
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-display text-xl"
+          aria-label={siteConfig.name}
+        >
+          <span aria-hidden className="block h-3 w-3 rounded-sm bg-(--color-accent)" />
+          <span>{siteConfig.shortName}</span>
+          <span className="text-sage-600">
+            {siteConfig.domain.slice(siteConfig.shortName.length) || ".pro"}
+          </span>
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-6 text-sm">
-            {NAV_LINKS.slice(1).map((link) => (
+            {nav.slice(1).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sage-800 transition-colors hover:text-warm-500"
+                  className="text-sage-800 transition-colors hover:text-(--color-accent)"
                 >
                   {link.label}
                 </Link>
@@ -34,7 +34,7 @@ export function Header() {
           </ul>
         </nav>
 
-        <MobileMenu links={NAV_LINKS} />
+        <MobileMenu links={nav} />
       </div>
     </header>
   );

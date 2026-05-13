@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { siteConfig } from "@/lib/site-config";
 import { calcCover, type Format, type Paper } from "@kdp/calc";
 
 export const runtime = "edge";
@@ -26,6 +27,8 @@ export async function GET(req: Request) {
     trimHeightIn: th,
   });
 
+  const { colors } = siteConfig.theme;
+
   return new ImageResponse(
     (
       <div
@@ -35,26 +38,26 @@ export async function GET(req: Request) {
           display: "flex",
           flexDirection: "column",
           padding: 64,
-          background: "#FBF7EB",
-          color: "#1F2421",
+          background: colors.bg,
+          color: colors.onBg,
           fontFamily: "Inter, system-ui, sans-serif",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 16, height: 16, background: "#C97B5C", borderRadius: 2 }} />
-          <div style={{ fontSize: 28, fontWeight: 600 }}>kdpcover.pro</div>
+          <div style={{ width: 16, height: 16, background: colors.accent, borderRadius: 2 }} />
+          <div style={{ fontSize: 28, fontWeight: 600 }}>{siteConfig.name}</div>
         </div>
-        <div style={{ marginTop: 64, fontSize: 24, color: "#688F6A" }}>
+        <div style={{ marginTop: 64, fontSize: 24, color: colors.muted }}>
           {f === "paperback" ? "Paperback" : "Hardcover"} · {pg} pages · {tw}″ × {th}″
         </div>
         <div style={{ marginTop: 24, fontSize: 96, lineHeight: 1, fontWeight: 700 }}>
           Spine: {out.spineWidthIn.toFixed(4)} in
         </div>
-        <div style={{ marginTop: 12, fontSize: 36, color: "#4F5D40" }}>
+        <div style={{ marginTop: 12, fontSize: 36, color: colors.success }}>
           {out.spineWidthMm.toFixed(2)} mm · Full cover {out.fullCoverWidthIn.toFixed(2)} × {out.fullCoverHeightIn.toFixed(2)} in
         </div>
-        <div style={{ marginTop: "auto", fontSize: 22, color: "#82986D" }}>
-          Pass KDP&rsquo;s review on the first try.
+        <div style={{ marginTop: "auto", fontSize: 22, color: colors.muted }}>
+          {siteConfig.tagline}
         </div>
       </div>
     ),

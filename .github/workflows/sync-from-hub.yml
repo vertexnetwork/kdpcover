@@ -1,0 +1,44 @@
+name: Sync from Vertex Hub
+
+on:
+  repository_dispatch:
+    types: [vertex-hub-sync]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch hub artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p public public/.well-known
+          curl -fsSL https://raw.githubusercontent.com/vertexnetwork/hub/main/config/network.json -o public/network.json
+          curl -fsSL https://raw.githubusercontent.com/vertexnetwork/hub/main/config/ai-bots.json -o public/ai-bots.json
+          curl -fsSL https://raw.githubusercontent.com/vertexnetwork/hub/main/crawler/ads.txt -o public/ads.txt
+          curl -fsSL https://raw.githubusercontent.com/vertexnetwork/hub/main/crawler/app-ads.txt -o public/app-ads.txt
+
+      - name: Open sync PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(hub): sync canonical artifacts"
+          title: "chore(hub): sync canonical artifacts"
+          body: |
+            Automated sync from `vertexnetwork/hub`.
+
+            Refreshed files:
+            - `public/network.json`
+            - `public/ai-bots.json`
+            - `public/ads.txt`
+            - `public/app-ads.txt`
+
+            CI must pass before this auto-merges.
+          branch: chore/hub-sync
+          delete-branch: true
+          labels: hub-sync,automated

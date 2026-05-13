@@ -1,0 +1,12 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    uses: vertexnetwork/hub/.github/workflows/ci.yml@v1
+    with:
+      node-version: "22"

@@ -5,9 +5,9 @@ const compat = new FlatCompat({
 });
 
 const config = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
   {
-    ignores: ["extension/dist/**", ".next/**", "node_modules/**"],
+    ignores: ["extension/dist/**", ".next/**", "node_modules/**", "playwright-report/**"],
   },
 ];
 

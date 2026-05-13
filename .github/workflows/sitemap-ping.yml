@@ -1,0 +1,20 @@
+name: Sitemap ping
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+jobs:
+  ping:
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: IndexNow (Bing) ping
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        if: env.INDEXNOW_KEY != ''
+        run: |
+          curl -fsS "https://www.bing.com/indexnow?url=https://kdpcover.pro/sitemap.xml&key=${INDEXNOW_KEY}" || true
+      - name: GSC sitemap ping (legacy GET)
+        run: |
+          curl -fsS "https://www.google.com/ping?sitemap=https://kdpcover.pro/sitemap.xml" || true

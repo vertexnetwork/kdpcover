@@ -1,35 +1,56 @@
+import { siteConfig } from "@/lib/site-config";
 import { siteFacts } from "@/lib/content/site-facts";
 import type { Sku } from "@/lib/templates/catalog";
 import { STORE_PATH } from "@/lib/templates/catalog";
+import { loadSisterSites } from "@/lib/network";
 
 type FaqLike = { q: string; a: string };
 
-const SITE_URL = siteFacts.site.url;
+const SITE_URL = siteConfig.url;
 
-export function softwareAppJsonLd() {
+export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "KDP Cover & Spine Width Calculator",
+    "@type": "WebSite",
+    name: siteConfig.name,
     url: SITE_URL,
-    applicationCategory: "DesignApplication",
-    operatingSystem: "Any (web)",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    description: siteFacts.site.description,
-    publisher: {
-      "@type": "Organization",
-      name: siteFacts.site.name,
-      url: SITE_URL,
+    description: siteConfig.description,
+    inLanguage: "en",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${SITE_URL}/calculator/{search_term_string}`,
+      "query-input": "required name=search_term_string",
     },
   };
 }
 
 export function organizationJsonLd() {
+  const sisterSites = loadSisterSites().map((s) => s.url);
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteFacts.site.name,
+    name: siteConfig.name,
     url: SITE_URL,
+    logo: `${SITE_URL}/icon-512.png`,
+    sameAs: sisterSites,
+  };
+}
+
+export function softwareAppJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": siteConfig.jsonLd.type,
+    name: "KDP Cover & Spine Width Calculator",
+    url: SITE_URL,
+    applicationCategory: siteConfig.jsonLd.applicationCategory,
+    operatingSystem: siteConfig.jsonLd.operatingSystem,
+    offers: { "@type": "Offer", price: String(siteConfig.jsonLd.price), priceCurrency: "USD" },
+    description: siteFacts.site.description,
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: SITE_URL,
+    },
   };
 }
 
@@ -41,7 +62,7 @@ export function productJsonLd(sku: Sku) {
     description: sku.hook,
     brand: {
       "@type": "Brand",
-      name: siteFacts.site.name,
+      name: siteConfig.name,
     },
     category: "DigitalGood",
     offers: {
@@ -95,6 +116,23 @@ export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
       position: i + 1,
       name: it.name,
       item: it.url,
+    })),
+  };
+}
+
+export function networkCollectionJsonLd() {
+  const sites = loadSisterSites();
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Vertex Network",
+    url: `${SITE_URL}/network`,
+    isPartOf: { "@type": "WebSite", name: siteConfig.name, url: SITE_URL },
+    hasPart: sites.map((s) => ({
+      "@type": "WebSite",
+      name: s.name,
+      url: s.url,
+      description: s.description,
     })),
   };
 }

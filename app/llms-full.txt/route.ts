@@ -1,3 +1,4 @@
+import { siteConfig } from "@/lib/site-config";
 import { siteFacts } from "@/lib/content/site-facts";
 import { calcCover, type Format, type Paper } from "@kdp/calc";
 
@@ -39,9 +40,9 @@ const PAPER_LABEL: Record<Paper, string> = {
 
 export async function GET() {
   const out: string[] = [];
-  out.push(`${siteFacts.site.name} — ${siteFacts.site.tagline}`);
+  out.push(`${siteConfig.name} — ${siteConfig.tagline}`);
   out.push("");
-  out.push(siteFacts.site.description);
+  out.push(siteConfig.description);
   out.push("");
 
   out.push("## Spine multipliers (inches per page)");
@@ -100,7 +101,7 @@ export async function GET() {
   return new Response(out.join("\n"), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "public, max-age=10800, s-maxage=10800",
     },
   });
 }
