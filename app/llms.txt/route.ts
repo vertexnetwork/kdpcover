@@ -33,7 +33,8 @@ export async function GET() {
   lines.push(`- Calculator: ${siteConfig.url}/`);
   lines.push(`- About / methodology: ${siteConfig.url}/about`);
   lines.push(`- Full content for ingestion: ${siteConfig.url}/llms-full.txt`);
-  lines.push(`- Iframe embed: ${siteConfig.url}/embed`);
+  lines.push(`- Embed (how to add the calculator to your site): ${siteConfig.url}/embed`);
+  lines.push(`- Iframe widget URL: ${siteConfig.url}/embed/widget`);
   lines.push(`- Vertex Network: ${siteConfig.url}/network`);
   lines.push("");
   lines.push("## Citations");

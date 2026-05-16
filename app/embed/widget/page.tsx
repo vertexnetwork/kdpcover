@@ -1,11 +1,14 @@
-import { EmbedClient } from "./EmbedClient";
+import { EmbedClient } from "../EmbedClient";
 
+// The raw iframe target embedded on third-party sites. Bare layout (no site
+// header/footer, frame-ancestors CSP set in next.config). Not indexed — the
+// human-facing page is the /embed landing.
 export const metadata = {
-  title: "Embed",
+  title: "KDP Cover Calculator — Embed widget",
   robots: { index: false, follow: false },
 };
 
-export default async function EmbedPage({
+export default async function EmbedWidgetPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

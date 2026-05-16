@@ -44,14 +44,14 @@ export default function TermsPage() {
         tax and EU VAT. The license permits unlimited commercial use of the included files
         (covers for unlimited books on KDP, IngramSpark, or elsewhere) but prohibits reselling
         or redistributing the templates themselves as templates. We offer a no-questions-asked
-        refund within 14 days of purchase — email your receipt and we will process it.
+        refund within 7 days of purchase — email your receipt and we will process it.
       </p>
 
-      <h2>5. Affiliate links</h2>
+      <h2>5. Outbound links</h2>
       <p>
-        The Recommended page and selected CTAs may include affiliate links. We may earn a small
-        commission when you sign up through these, at no extra cost to you. We only recommend
-        products we have used personally on KDP projects.
+        We do not run advertising. Some outbound links may occasionally be affiliate links; where
+        they are, we may earn a small commission at no extra cost to you, and only for tools we
+        have used personally on KDP projects.
       </p>
 
       <h2>6. No warranties</h2>

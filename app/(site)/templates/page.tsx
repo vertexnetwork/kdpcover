@@ -67,7 +67,7 @@ export default function TemplatesStorePage() {
         <dl className="mt-4 space-y-6">
           <Faq
             q="Do I get a refund if it doesn't work?"
-            a="Yes — 14-day no-questions-asked refund. Email the receipt and we'll process it."
+            a="Yes — 7-day no-questions-asked refund. Email the receipt and we'll process it."
           />
           <Faq
             q="What software do I need?"

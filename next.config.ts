@@ -27,14 +27,16 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/embed",
+        // Only the raw widget is iframe-able. The /embed landing page is a
+        // normal page and must keep the strict X-Frame-Options DENY below.
+        source: "/embed/widget",
         headers: [
           { key: "Content-Security-Policy", value: EMBED_FRAME_ANCESTORS_CSP },
           { key: "X-Frame-Options", value: "" },
         ],
       },
       {
-        source: "/((?!embed).*)",
+        source: "/((?!embed/widget).*)",
         headers: [
           { key: "Content-Security-Policy", value: siteCsp },
           { key: "X-Frame-Options", value: "DENY" },

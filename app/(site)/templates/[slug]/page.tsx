@@ -121,7 +121,7 @@ export default async function ProductPage({ params }: Params) {
             <ul className="mt-6 space-y-2 border-t border-sage-100 pt-5 text-xs text-sage-700">
               <li className="flex items-center gap-2">
                 <ShieldCheck className="h-3.5 w-3.5 text-sage-600" aria-hidden />
-                14-day refund guarantee
+                7-day refund guarantee
               </li>
               <li className="flex items-center gap-2">
                 <ShieldCheck className="h-3.5 w-3.5 text-sage-600" aria-hidden />

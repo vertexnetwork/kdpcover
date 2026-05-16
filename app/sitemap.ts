@@ -24,7 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
     "/guide",
     "/changelog",
-    "/recommended",
     "/network",
     "/extension",
     "/embed",

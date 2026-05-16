@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Code } from "lucide-react";
 import { track } from "@/lib/analytics/track";
 
-const SNIPPET = `<iframe src="https://kdpcover.pro/embed?theme=light"
+const SNIPPET = `<iframe src="https://kdpcover.pro/embed/widget?theme=light"
   width="100%" height="640" style="border:0; border-radius:12px"
   loading="lazy" title="KDP Cover Calculator"></iframe>
 <script>window.addEventListener("message",function(e){
   if(e.data && e.data.type==="kdpcover:height"){
-    var f=document.querySelector('iframe[src*="kdpcover.pro/embed"]');
+    var f=document.querySelector('iframe[src*="kdpcover.pro/embed/widget"]');
     if(f) f.style.height=e.data.height+"px";
   }
 });</script>`;

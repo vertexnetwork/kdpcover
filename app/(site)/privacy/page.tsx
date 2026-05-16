@@ -79,7 +79,7 @@ export default function PrivacyPage() {
       <h2>Advertising</h2>
       <p>
         {siteConfig.features.ads.provider === "none"
-          ? "We do not run advertising. The site is monetised by sales of digital templates through Gumroad and by a single affiliate referral, when enabled."
+          ? "We do not run advertising. The site is monetised solely by sales of digital templates through Gumroad."
           : `We run ads through ${siteConfig.features.ads.provider}, gated by your cookie consent.`}
       </p>
 

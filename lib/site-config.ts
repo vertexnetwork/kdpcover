@@ -61,15 +61,14 @@ export const siteConfig = {
       { href: "/", label: "Calculator" },
       { href: "/templates", label: "Templates" },
       { href: "/guide", label: "Guide" },
-      { href: "/recommended", label: "Recommended" },
+      { href: "/embed", label: "Embed" },
       { href: "/about", label: "About" },
     ],
     footer: {
       product: [
         { href: "/", label: "Calculator" },
-        { href: "/embed", label: "Iframe widget" },
+        { href: "/embed", label: "Embed widget" },
         { href: "/extension", label: "Chrome extension" },
-        { href: "/recommended", label: "Recommended" },
       ],
       company: [
         { href: "/about", label: "About" },
@@ -95,7 +94,7 @@ export const siteConfig = {
   repoUrl: "https://github.com/vertexnetwork/kdpcover",
 
   features: {
-    embed: { enabled: true, route: "/embed", params: ["theme", "compact", "accent", "defaultFormat"] },
+    embed: { enabled: true, route: "/embed/widget", landing: "/embed", params: ["theme", "compact", "accent", "defaultFormat"] },
     extension: {
       enabled: true,
       chromeWebStoreUrl: process.env.NEXT_PUBLIC_CHROME_WEB_STORE_URL ?? "",
