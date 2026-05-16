@@ -14,8 +14,8 @@ type Props = {
   output: CoverCalcOutput;
 };
 
-export function TemplateUpsell({ input, output }: Props) {
-  const sku = useMemo(() => recommendSkuForCalc({ format: input.format }), [input.format]);
+export function TemplateUpsell({ output }: Props) {
+  const sku = useMemo(() => recommendSkuForCalc(), []);
   const checkoutUrl = useMemo(() => {
     const r = resolveCheckout(sku);
     return r.status === "ready" ? r.url : null;

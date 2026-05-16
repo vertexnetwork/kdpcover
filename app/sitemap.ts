@@ -3,25 +3,20 @@ import { siteConfig } from "@/lib/site-config";
 import { curatedPseoSlugs } from "@kdp/slug";
 import { CATALOG, STORE_PATH } from "@/lib/templates/catalog";
 
-const PER_SHARD = 45000;
+// Single sitemap served at /sitemap.xml. Total URL count (~3.2k pSEO + static
+// + catalog) is well under Google's 50,000-per-file limit, so no sharding /
+// generateSitemaps() — exporting that would move the route to /sitemap/[id].xml
+// and make /sitemap.xml (the URL robots.ts advertises) 404. If pSEO ever
+// approaches ~45k URLs, reintroduce a proper sitemap index here.
+const SITEMAP_MAX = 50000;
 
 const BUILD_LAST_MOD = new Date(
   process.env.VERCEL_GIT_COMMIT_AUTHOR_DATE ??
     process.env.SOURCE_DATE_EPOCH ??
-    "2026-05-12T00:00:00Z",
+    "2026-05-15T00:00:00Z",
 );
 
-export async function generateSitemaps(): Promise<{ id: number }[]> {
-  const total = curatedPseoSlugs().length + 16 + CATALOG.length;
-  const shards = Math.max(1, Math.ceil(total / PER_SHARD));
-  return Array.from({ length: shards }, (_, i) => ({ id: i }));
-}
-
-export default async function sitemap({
-  id,
-}: {
-  id: number;
-}): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const slugs = curatedPseoSlugs();
   const staticUrls = [
     "",
@@ -59,6 +54,5 @@ export default async function sitemap({
     })),
   ];
 
-  const start = id * PER_SHARD;
-  return all.slice(start, start + PER_SHARD);
+  return all.slice(0, SITEMAP_MAX);
 }

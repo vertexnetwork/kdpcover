@@ -64,6 +64,30 @@ export const siteFacts = {
   ],
   faq: [
     {
+      q: "How do I calculate my KDP book cover size?",
+      a: "Choose paperback or hardcover, pick your trim size and paper type, and enter your interior page count. The calculator multiplies the page count by KDP's paper multiplier to get the spine width, then adds trim, bleed, and (for hardcover) hinge and wrap to produce the exact full-cover width and height.",
+    },
+    {
+      q: "What size should a KDP paperback cover be?",
+      a: "It depends on page count, trim, and paper. For a 300-page 6 × 9 in white-paper paperback the full cover is 12.9256 × 9.25 in with a 0.6756 in spine. Enter your own numbers above for an exact, KDP-verified size.",
+    },
+    {
+      q: "Is this the same as Amazon's official KDP cover calculator?",
+      a: "It uses the same published KDP formulas and every value is golden-tested against Amazon's official cover-template generator. The difference: it runs entirely in your browser with no Amazon login, and adds a live safe-zone diagram and a downloadable print-ready template.",
+    },
+    {
+      q: "What is the Kindle eBook cover size?",
+      a: "A Kindle eBook cover is a single image, ideally 1,600 × 2,560 px (a 1.6:1 ratio). That is separate from a print cover — this tool calculates print paperback and hardcover dimensions, which change with page count and trim size.",
+    },
+    {
+      q: "What spine width do I get for a 200-page book?",
+      a: "A 200-page white-paper paperback has a 0.4504 in spine (200 × 0.002252). Cream is 0.5000 in; standard color matches white; case-laminate hardcover is 0.4694 in. Adjust paper or page count above to recompute instantly.",
+    },
+    {
+      q: "Why did KDP reject my cover for wrong dimensions?",
+      a: "The most common causes are computing the spine from the wrong paper multiplier and omitting the 0.125 in bleed on every paperback edge. Match the full-cover size from this calculator exactly, keep text inside the safe zone, and upload a single flattened PDF with fonts embedded.",
+    },
+    {
       q: "What is the KDP white-paper paperback spine width formula?",
       a: "The KDP white-paper paperback spine width formula is 0.002252 inches per page. Multiply your interior page count by 0.002252 to get the spine width in inches.",
     },

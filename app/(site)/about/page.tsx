@@ -1,11 +1,11 @@
+import Link from "next/link";
 import { siteFacts } from "@/lib/content/site-facts";
-import { faqJsonLd } from "@/lib/seo/jsonld";
 import { siteConfig } from "@/lib/site-config";
 import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
 
 export const metadata = {
-  title: "About",
-  description: `How ${siteConfig.name} computes KDP spine width and cover dimensions, and where the multipliers come from.`,
+  title: "Methodology & Sources",
+  description: `How ${siteConfig.name} computes KDP spine width and cover dimensions, and the official Amazon sources behind every multiplier.`,
   alternates: { canonical: "/about" },
 };
 
@@ -45,15 +45,14 @@ export default function AboutPage() {
         ))}
       </ul>
 
-      <h2 className="mt-8 text-2xl">FAQ</h2>
-      <dl className="mt-3 space-y-5">
-        {siteFacts.faq.map((qa) => (
-          <div key={qa.q}>
-            <dt className="font-medium text-(--color-on-bg)">{qa.q}</dt>
-            <dd className="mt-1 text-sm text-sage-800">{qa.a}</dd>
-          </div>
-        ))}
-      </dl>
+      <p className="mt-8 text-sage-800">
+        Common questions about spine width, bleed, trim sizes, and KDP rejections are answered on
+        the{" "}
+        <Link href="/" className="underline hover:text-(--color-accent)">
+          KDP cover calculator
+        </Link>{" "}
+        itself, alongside the live tool.
+      </p>
 
       <h2 className="mt-8 text-2xl">Contact</h2>
       <p className="mt-2 text-sage-800">
@@ -68,11 +67,6 @@ export default function AboutPage() {
       </p>
 
       <EmailCaptureForm source="about" className="mt-10" />
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(siteFacts.faq)) }}
-      />
     </article>
   );
 }
