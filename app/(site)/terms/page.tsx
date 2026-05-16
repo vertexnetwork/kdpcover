@@ -11,7 +11,7 @@ export default function TermsPage() {
     <article className="prose prose-sage mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
       <h1>Terms of Service</h1>
       <p className="text-sm text-sage-700">
-        <em>Last updated: 2026-05-12</em>
+        <em>Last updated: 2026-05-15</em>
       </p>
 
       <h2>1. The service</h2>
@@ -40,10 +40,11 @@ export default function TermsPage() {
 
       <h2>4. Purchases</h2>
       <p>
-        Template-pack purchases are processed by Lemon Squeezy, including tax and EU VAT. The
-        license permits unlimited commercial use of the included files but prohibits reselling
-        the templates themselves as templates. Refunds are issued at our discretion within 14
-        days of purchase.
+        Template-pack purchases are processed by Gumroad as Merchant of Record, including sales
+        tax and EU VAT. The license permits unlimited commercial use of the included files
+        (covers for unlimited books on KDP, IngramSpark, or elsewhere) but prohibits reselling
+        or redistributing the templates themselves as templates. We offer a no-questions-asked
+        refund within 14 days of purchase — email your receipt and we will process it.
       </p>
 
       <h2>5. Affiliate links</h2>

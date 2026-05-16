@@ -76,7 +76,7 @@ export function CheckoutTrust() {
   return (
     <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-sage-700">
       <Lock className="h-3 w-3" aria-hidden />
-      Secure checkout via Lemon Squeezy. Card, Apple Pay, Google Pay. Instant download.
+      Secure checkout via Gumroad. Card, PayPal, Apple Pay. Instant download.
     </p>
   );
 }

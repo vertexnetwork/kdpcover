@@ -28,10 +28,11 @@ function activeProviders() {
         "stores opt-in email addresses for KDP-spec-change notifications; only used when Amazon changes a spec",
     });
   }
-  if (siteConfig.monetization.lemonSqueezy.storeId) {
+  if (siteConfig.monetization.gumroad.productUrl) {
     list.push({
-      name: "Lemon Squeezy",
-      purpose: "hosted checkout and tax (EU VAT) for the template store, after you click Buy",
+      name: "Gumroad",
+      purpose:
+        "hosted checkout, payment processing, and sales tax / EU VAT (as Merchant of Record) for the template store, after you click Buy",
     });
   }
   if (siteConfig.features.ads.provider !== "none") {
@@ -49,7 +50,7 @@ export default function PrivacyPage() {
     <article className="prose prose-sage mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
       <h1>Privacy Policy</h1>
       <p className="text-sm text-sage-700">
-        <em>Last updated: 2026-05-12</em>
+        <em>Last updated: 2026-05-15</em>
       </p>
 
       <h2>What we collect</h2>
@@ -78,7 +79,7 @@ export default function PrivacyPage() {
       <h2>Advertising</h2>
       <p>
         {siteConfig.features.ads.provider === "none"
-          ? "We do not run advertising. The site is monetised by sales of digital templates through Lemon Squeezy and by a single affiliate referral, when enabled."
+          ? "We do not run advertising. The site is monetised by sales of digital templates through Gumroad and by a single affiliate referral, when enabled."
           : `We run ads through ${siteConfig.features.ads.provider}, gated by your cookie consent.`}
       </p>
 
@@ -94,7 +95,7 @@ export default function PrivacyPage() {
       <h2>Cookies</h2>
       <p>
         We use no first-party cookies. Optional third-party cookies are gated by the consent
-        banner. Lemon Squeezy sets checkout cookies only after you click a buy button. No
+        banner. Gumroad sets checkout cookies only after you click a buy button. No
         cookies are set for advertising unless you opt in.
       </p>
 

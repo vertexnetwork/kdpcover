@@ -127,12 +127,13 @@ export const siteConfig = {
   },
 
   monetization: {
-    lemonSqueezy: {
-      storeId: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_STORE_ID ?? "",
-      productSlug: "kdp-cover-template",
+    // Single digital product, sold through Gumroad (Merchant of Record —
+    // handles global sales tax / EU VAT). Set the full product permalink in
+    // NEXT_PUBLIC_GUMROAD_PRODUCT_URL; blank keeps the store in "notify me"
+    // state so SEO can compound before launch.
+    gumroad: {
+      productUrl: process.env.NEXT_PUBLIC_GUMROAD_PRODUCT_URL ?? "",
     },
-    stripe: { priceIds: { monthly: "", yearly: "" } },
-    gumroad: { productUrl: "", price: 0 },
   },
 
   verification: {

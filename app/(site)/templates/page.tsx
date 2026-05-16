@@ -28,8 +28,9 @@ export default function TemplatesStorePage() {
         </h1>
         <p className="mt-4 text-base text-sage-800 sm:text-lg">
           KDP-spec cover files with spine width, bleed, hinge zones, and barcode area already
-          positioned. Open in Affinity Publisher, Illustrator, Inkscape, Figma, or Canva Pro and
-          design — no measuring, no math, no failed cover review.
+          positioned to KDP&rsquo;s exact published spec. Open in Affinity Publisher, Illustrator,
+          Inkscape, Figma, or Canva Pro and design — no measuring, no spine-width math, no
+          guessing the dimensions KDP rejects covers over.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-sage-700">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-sage-200 bg-(--color-surface) px-2.5 py-1">
@@ -74,7 +75,7 @@ export default function TemplatesStorePage() {
           />
           <Faq
             q="Will KDP accept covers made from these?"
-            a="Yes. Every dimension matches KDP's published spec. The bundle includes a one-page checklist so you can verify before upload."
+            a="The dimensions are exact — built to KDP's published spec and verified against KDP's official template generator. They're guide templates: you add your artwork, delete the guide layer, and export a flattened PDF. The included cheat sheet and README walk through the pre-upload checks so the file KDP reviews is correct."
           />
         </dl>
         <p className="mt-6 text-sm">

@@ -2,7 +2,7 @@
 # Synced from vertexnetwork/hub/crawler/ads.txt
 # IAB ads.txt v1.1: https://iabtechlab.com/ads-txt
 #
-# kdpcover.pro is monetised by direct template sales (Lemon Squeezy) and
+# kdpcover.pro is monetised by direct template sales (Gumroad) and
 # affiliate referrals. No authorised ad sellers at this time.
 #
 # Re-enable example:

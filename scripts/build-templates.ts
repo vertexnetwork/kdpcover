@@ -1,24 +1,32 @@
 /**
- * Build the deliverable template library.
+ * Build the deliverable template library — the single product sold on Gumroad.
  *
- * Run with: npm run build:templates
+ * Run with:
+ *   npm run build:templates            # full library (the real deliverable)
+ *   npm run build:templates -- --sample  # ~16-file subset for fast QA
  *
- * Outputs (per tier):
- *   dist/templates/<tier>/<format>/<paper>/<trim>/*.svg   — print-ready SVG
- *   dist/templates/<tier>/<format>/<paper>/<trim>/*.pdf   — same geometry, PDF
- *   dist/templates/cheatsheet.html                        — single-page reference
+ * Output:
+ *   dist/templates/<format>/<paper>/<trim>/kdp_*.svg   — guide-layer SVG
+ *   dist/templates/<format>/<paper>/<trim>/kdp_*.pdf   — same geometry, PDF
+ *   dist/templates/cheatsheet.html                     — one-page reference
+ *   dist/templates/README.txt                          — buyer instructions + license
  *
- * After running this, zip each tier (PowerShell on Windows):
- *   Compress-Archive -Path dist/templates/single     -DestinationPath dist/templates/single.zip
- *   Compress-Archive -Path dist/templates/universal  -DestinationPath dist/templates/universal.zip
- *   Compress-Archive -Path dist/templates/mega       -DestinationPath dist/templates/mega.zip
+ * Then ship it:
+ *   1. Zip the whole folder (PowerShell on Windows):
+ *        Compress-Archive -Path dist/templates/* -DestinationPath dist/kdp-cover-template-pack.zip
+ *   2. Gumroad → New Product → Digital product → upload the zip.
+ *   3. Copy the product permalink (Share → copy URL).
+ *   4. Set NEXT_PUBLIC_GUMROAD_PRODUCT_URL to that permalink in Vercel.
+ *      The buy buttons activate automatically; until then the store shows
+ *      "Notify me when this drops".
  *
- * Upload the three zips to Lemon Squeezy as the digital deliverable per
- * variant, then fill in NEXT_PUBLIC_LS_VARIANT_* envs in Vercel — the buy
- * buttons activate automatically.
+ * Catalog contract: lib/templates/catalog.ts advertises this exact library
+ * (paperback + case-laminate hardcover, every common trim, every paper, every
+ * page-count step). This script prints the true file count — keep the catalog
+ * copy in sync with it.
  */
 
-import { mkdirSync, writeFileSync, createWriteStream } from "node:fs";
+import { mkdirSync, writeFileSync, createWriteStream, statSync } from "node:fs";
 import { join } from "node:path";
 
 // pdfkit is CJS — tsx imports default ok via esModuleInterop
@@ -36,8 +44,17 @@ import type { Format, Paper } from "../lib/kdp/calc";
 
 const ROOT = process.cwd();
 const OUT = join(ROOT, "dist", "templates");
+const SAMPLE = process.argv.includes("--sample");
 
-type Tier = "single" | "universal" | "mega";
+// The five most-used paperback trims; every KDP case-laminate hardcover trim.
+const PAPERBACK_STORE_TRIMS = PAPERBACK_TRIMS.filter((t) =>
+  ["5x8", "5.5x8.5", "6x9", "7x10", "8.5x11"].includes(t.slug),
+);
+
+const POINTS_PER_INCH = 72;
+
+let emitted = 0;
+const failures: string[] = [];
 
 function ensureDir(path: string) {
   mkdirSync(path, { recursive: true });
@@ -46,8 +63,6 @@ function ensureDir(path: string) {
 function baseNameFor(format: Format, paper: Paper, pages: number, tw: number, th: number): string {
   return `kdp_${format}_${paper}_${pages}p_${tw}x${th}`;
 }
-
-const POINTS_PER_INCH = 72;
 
 function writePdfFromSvg(svg: string, widthIn: number, heightIn: number, outPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -64,75 +79,61 @@ function writePdfFromSvg(svg: string, widthIn: number, heightIn: number, outPath
   });
 }
 
-async function emit(tier: Tier, format: Format, paper: Paper, pages: number, tw: number, th: number) {
+async function emit(format: Format, paper: Paper, pages: number, tw: number, th: number) {
   const input = { format, paper, pageCount: pages, trimWidthIn: tw, trimHeightIn: th };
   const out = calcCover(input);
   const svg = buildTemplateSvg(input, out);
 
-  const tierDir = join(OUT, tier);
-  const subDir = join(tierDir, format, paper, `${tw}x${th}`);
+  const subDir = join(OUT, format, paper, `${tw}x${th}`);
   ensureDir(subDir);
   const base = baseNameFor(format, paper, pages, tw, th);
-  writeFileSync(join(subDir, `${base}.svg`), svg, "utf8");
-  await writePdfFromSvg(svg, out.fullCoverWidthIn, out.fullCoverHeightIn, join(subDir, `${base}.pdf`));
-}
+  const svgPath = join(subDir, `${base}.svg`);
+  const pdfPath = join(subDir, `${base}.pdf`);
 
-async function buildSingle(): Promise<number> {
-  // Twelve canonical samples covering the most common (trim, paper, pages)
-  // combos — we include this set with the "Single" SKU as a starter
-  // library; buyers pick the file matching their book.
-  const samples: { f: Format; p: Paper; pages: number; tw: number; th: number }[] = [
-    { f: "paperback", p: "white", pages: 200, tw: 6, th: 9 },
-    { f: "paperback", p: "white", pages: 300, tw: 6, th: 9 },
-    { f: "paperback", p: "white", pages: 400, tw: 6, th: 9 },
-    { f: "paperback", p: "cream", pages: 200, tw: 5.5, th: 8.5 },
-    { f: "paperback", p: "cream", pages: 300, tw: 5.5, th: 8.5 },
-    { f: "paperback", p: "cream", pages: 400, tw: 5.5, th: 8.5 },
-    { f: "paperback", p: "white", pages: 250, tw: 5, th: 8 },
-    { f: "paperback", p: "white", pages: 350, tw: 5, th: 8 },
-    { f: "paperback", p: "color-premium", pages: 100, tw: 8.5, th: 11 },
-    { f: "paperback", p: "color-premium", pages: 200, tw: 8.5, th: 11 },
-    { f: "paperback", p: "white", pages: 220, tw: 7, th: 10 },
-    { f: "paperback", p: "white", pages: 320, tw: 7, th: 10 },
-  ];
-  for (const s of samples) {
-    await emit("single", s.f, s.p, s.pages, s.tw, s.th);
+  writeFileSync(svgPath, svg, "utf8");
+  await writePdfFromSvg(svg, out.fullCoverWidthIn, out.fullCoverHeightIn, pdfPath);
+
+  // ---- Validation: the deliverable must be correct, not just present. ----
+  // 1. SVG carries the deletable guide layer the catalog promises.
+  if (!svg.includes('id="kdp-guides"')) {
+    failures.push(`${base}.svg: missing deletable guide layer`);
   }
-  return samples.length;
+  // 2. PDF page size equals the full cover size (the whole point of the
+  //    product). pdfkit writes the MediaBox from `size`; verify the file is
+  //    non-trivial and the SVG/Calc geometry agrees.
+  const expectedPt = {
+    w: round2(out.fullCoverWidthIn * POINTS_PER_INCH),
+    h: round2(out.fullCoverHeightIn * POINTS_PER_INCH),
+  };
+  if (!svg.includes(`width="${expectedPt.w}pt" height="${expectedPt.h}pt"`)) {
+    failures.push(
+      `${base}.svg: canvas != full cover (${expectedPt.w}×${expectedPt.h}pt expected)`,
+    );
+  }
+  try {
+    if (statSync(pdfPath).size < 800) failures.push(`${base}.pdf: suspiciously small`);
+  } catch {
+    failures.push(`${base}.pdf: not written`);
+  }
+
+  emitted++;
 }
 
-async function buildPaperbackInto(tier: Tier): Promise<number> {
-  // Every paperback combo across the 5 most-used trims and full page-count
-  // grid. This is the hero SKU — the buyer never has to recompute spine
-  // width again across the lifetime of their backlist.
-  const trims = PAPERBACK_TRIMS.filter((t) =>
-    ["5x8", "5.5x8.5", "6x9", "7x10", "8.5x11"].includes(t.slug),
-  );
-  const buckets = pSeoPageBuckets("paperback");
+async function buildFormat(
+  format: Format,
+  trims: { widthIn: number; heightIn: number }[],
+): Promise<number> {
   let n = 0;
-  for (const trim of trims) {
-    for (const paper of ALL_PAPERS) {
-      for (const pages of buckets) {
-        await emit(tier, "paperback", paper, pages, trim.widthIn, trim.heightIn);
-        n++;
-      }
-    }
-  }
-  return n;
-}
-
-async function buildUniversal(): Promise<number> {
-  return buildPaperbackInto("universal");
-}
-
-async function buildMega(): Promise<number> {
-  let n = await buildPaperbackInto("mega");
-  // Hardcover across all KDP-supported case-laminate trims.
-  const hcBuckets = pSeoPageBuckets("hardcover");
-  for (const trim of HARDCOVER_TRIMS) {
-    for (const paper of ALL_PAPERS) {
-      for (const pages of hcBuckets) {
-        await emit("mega", "hardcover", paper, pages, trim.widthIn, trim.heightIn);
+  const buckets = pSeoPageBuckets(format);
+  const papers = SAMPLE ? ([ALL_PAPERS[0]] as Paper[]) : (ALL_PAPERS as readonly Paper[]);
+  const useTrims = SAMPLE ? trims.slice(0, 1) : trims;
+  const useBuckets = SAMPLE
+    ? [buckets[0], buckets[Math.floor(buckets.length / 2)], buckets[buckets.length - 1]]
+    : buckets;
+  for (const trim of useTrims) {
+    for (const paper of papers) {
+      for (const pages of useBuckets) {
+        await emit(format, paper, pages, trim.widthIn, trim.heightIn);
         n++;
       }
     }
@@ -184,28 +185,92 @@ function buildCheatsheet() {
 
 <div class="footer">kdpcover.pro · Free updates if KDP changes a multiplier.</div>
 </body></html>`;
-  ensureDir(OUT);
   writeFileSync(join(OUT, "cheatsheet.html"), html, "utf8");
+}
+
+function buildReadme(total: number) {
+  const txt = `KDP COVER TEMPLATE PACK — kdpcover.pro
+=======================================
+
+WHAT'S IN HERE
+  ${total} print-ready cover templates as matching SVG + PDF pairs, organised:
+    <format>/<paper>/<trim>/kdp_<format>_<paper>_<pages>p_<w>x<h>.(svg|pdf)
+  Plus cheatsheet.html — a one-page reference of every multiplier and rule.
+
+HOW TO USE
+  1. Find the file matching your book: format -> paper -> trim -> page count.
+     (Exact page count not listed? Use the calculator at kdpcover.pro, or pick
+     the nearest step and confirm with the cheat sheet.)
+  2. Open the SVG (recommended) or PDF in Affinity Publisher, Illustrator,
+     Inkscape, Figma, or Canva Pro. The page is already the exact full-cover
+     size including bleed/wrap.
+  3. Design your cover BELOW the guide layer.
+  4. **Before exporting to KDP, DELETE the layer named
+     "KDP GUIDES — DELETE THIS LAYER BEFORE EXPORTING TO KDP".**
+     Everything visible in the template (spine fill, safe-zone dashes,
+     Back/Front/Barcode labels, kdpcover.pro footer) is on that one layer.
+     Deleting it leaves a clean, correctly-sized canvas with only your art.
+  5. Export a single flattened PDF, fonts embedded, 300 DPI, and upload to KDP.
+
+IMPORTANT
+  These are dimension/guide templates. Every measurement (spine width, bleed,
+  hinge dead-zones, barcode area) matches KDP's published spec and is verified
+  against KDP's official cover-template generator. They are not finished
+  covers — your artwork and your export settings (flattened PDF, embedded
+  fonts, adequate resolution) determine whether KDP accepts the upload. When
+  in doubt, run the final file through KDP's previewer before publishing.
+
+LICENSE
+  Unlimited commercial use: covers for unlimited books on KDP, IngramSpark, or
+  anywhere else. You may NOT resell or redistribute the templates themselves
+  as templates. No warranty; see kdpcover.pro/terms.
+
+SUPPORT & UPDATES
+  Free updates if KDP changes a multiplier — re-download from your Gumroad
+  library. Questions or accuracy reports: hello@kdpcover.pro
+`;
+  writeFileSync(join(OUT, "README.txt"), txt, "utf8");
 }
 
 async function main() {
   ensureDir(OUT);
   const t0 = Date.now();
-  const single = await buildSingle();
-  const universal = await buildUniversal();
-  const mega = await buildMega();
+
+  const paperback = await buildFormat("paperback", PAPERBACK_STORE_TRIMS);
+  const hardcover = await buildFormat("hardcover", HARDCOVER_TRIMS);
   buildCheatsheet();
+  buildReadme(emitted);
+
   const seconds = ((Date.now() - t0) / 1000).toFixed(1);
 
-  console.log(`✓ single:    ${single} covers (SVG + PDF)`);
-  console.log(`✓ universal: ${universal} covers (SVG + PDF)`);
-  console.log(`✓ mega:      ${mega} covers (SVG + PDF)`);
-  console.log(`✓ cheatsheet.html`);
-  console.log(`  emitted in ${seconds}s`);
+  console.log(`${SAMPLE ? "[SAMPLE] " : ""}paperback:  ${paperback} covers (SVG + PDF)`);
+  console.log(`${SAMPLE ? "[SAMPLE] " : ""}hardcover:  ${hardcover} covers (SVG + PDF)`);
+  console.log(`total:      ${emitted} templates  (${emitted * 2} files)`);
+  console.log(`cheatsheet.html + README.txt`);
+  console.log(`emitted in ${seconds}s -> ${OUT}`);
   console.log("");
-  console.log(`Output: ${OUT}`);
-  console.log("");
-  console.log("Next: zip each tier (Compress-Archive on Windows), upload to Lemon Squeezy.");
+
+  if (failures.length > 0) {
+    console.error(`✗ VALIDATION FAILED — ${failures.length} issue(s):`);
+    for (const f of failures.slice(0, 20)) console.error(`  - ${f}`);
+    if (failures.length > 20) console.error(`  …and ${failures.length - 20} more`);
+    process.exit(1);
+  }
+
+  console.log("✓ validation passed: every SVG has a deletable guide layer and");
+  console.log("  a canvas matching its full-cover size; every PDF written.");
+  if (SAMPLE) {
+    console.log("");
+    console.log("Sample run only. Run `npm run build:templates` for the full deliverable.");
+  } else {
+    console.log("");
+    console.log(`Catalog should advertise ~${emitted} templates. Next: zip dist/templates/*`);
+    console.log("and upload to Gumroad, then set NEXT_PUBLIC_GUMROAD_PRODUCT_URL.");
+  }
+}
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
 }
 
 main().catch((err) => {

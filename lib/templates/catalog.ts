@@ -7,9 +7,13 @@
  *   /templates                          → SKU landing page
  *   /templates/[slug]                   → product detail (programmatic)
  *
- * Checkout: Lemon Squeezy hosted checkout. Set
- * `NEXT_PUBLIC_LEMON_SQUEEZY_STORE_ID` plus `NEXT_PUBLIC_LEMON_SQUEEZY_VARIANT`
- * to the variant UUID.
+ * Checkout: Gumroad hosted checkout (Merchant of Record). Set
+ * `NEXT_PUBLIC_GUMROAD_PRODUCT_URL` to the product permalink; until then the
+ * store renders a "Notify me when this drops" placeholder.
+ *
+ * The deliverable that backs this SKU is built by scripts/build-templates.ts
+ * (~2,500 templates). Keep the counts in `scope`/`includes` in sync with what
+ * that script prints.
  */
 
 export type SkuSlug = "kdp-cover-template";
@@ -43,11 +47,11 @@ const SKU: Sku = {
   compareAtUsd: 95,
   highlight: true,
   scope:
-    "Paperback and case-laminate hardcover templates across every common KDP trim, every paper type, and every page-count step. 1,300+ ready-to-design files in matching SVG + PDF pairs.",
+    "Paperback and case-laminate hardcover templates across every common KDP trim, every paper type, and every page-count step — 2,500+ ready-to-design templates, each as a matching SVG + PDF pair.",
   format: "all",
   includes: [
     {
-      label: "1,300+ KDP cover templates",
+      label: "2,500+ KDP cover templates",
       detail: "Paperback and hardcover, every standard trim, every paper, every page-count step.",
     },
     {
@@ -59,8 +63,9 @@ const SKU: Sku = {
       detail: "Verified against KDP's official cover-template generator.",
     },
     {
-      label: "Spine + barcode + safe-zone layers",
-      detail: "Toggle off before export. Always positioned to KDP spec.",
+      label: "Guides on one deletable layer",
+      detail:
+        "Spine, safe zones, hinge dead-zones, and barcode area sit on a single named layer. Delete it before export and you're left with a clean, correctly-sized print canvas.",
     },
     {
       label: "Folder structure that mirrors your KDP listing",
@@ -82,7 +87,7 @@ const SKU: Sku = {
     },
     {
       q: "Will this pass KDP's automated cover review?",
-      a: "Yes — every dimension matches KDP's published spec, including bleed, hinge dead-zones (hardcover), and barcode placement.",
+      a: "Every dimension is built to KDP's published spec — bleed, spine, hinge dead-zones (hardcover), and barcode area — and verified against KDP's official cover-template generator. These are exact guide templates: your own artwork and export settings (single flattened PDF, embedded fonts, adequate resolution) are what KDP ultimately reviews. Delete the guide layer and export to spec and the dimensions will be correct.",
     },
     {
       q: "Is this licensed for commercial use?",
