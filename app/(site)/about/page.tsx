@@ -23,8 +23,17 @@ export default function AboutPage() {
 
       <h2 className="mt-8 text-2xl">Methodology</h2>
       <p className="mt-2 text-sage-800">
-        Every multiplier is verified against KDP&rsquo;s official cover-template generator. All
-        math runs in your browser; nothing is uploaded. The full set of formulas lives in{" "}
+        Every multiplier and formula was last reconciled against Amazon KDP&rsquo;s official
+        cover-template generator on{" "}
+        <time dateTime={siteFacts.verifiedDate}>
+          {new Date(siteFacts.verifiedDate + "T00:00:00Z").toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            timeZone: "UTC",
+          })}
+        </time>
+        . All math runs in your browser; nothing is uploaded. The full set of formulas lives in{" "}
         <code className="rounded bg-sage-100 px-1 py-0.5 text-xs">lib/kdp/calc.ts</code> with full
         unit-test coverage.
       </p>

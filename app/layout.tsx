@@ -51,6 +51,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
 };
 
@@ -63,6 +66,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      {/* rel=search has no Metadata-API field; React 19 hoists it to <head>. */}
+      <link
+        rel="search"
+        type="application/opensearchdescription+xml"
+        href="/opensearch.xml"
+        title={siteConfig.name}
+      />
       <body className="flex min-h-dvh flex-col bg-(--color-bg) text-(--color-on-bg)">
         <ConsentProvider required={siteConfig.features.consent.required}>
           {children}

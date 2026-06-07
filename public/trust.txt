@@ -1,0 +1,6 @@
+# trust.txt — kdpcover.pro (https://journallist.net spec)
+contact=mailto:security@kdpcover.pro
+contact=https://kdpcover.pro/contact
+disclosure=https://kdpcover.pro/about
+belongto=https://github.com/vertexnetwork/hub
+datetime=2026-05-15T00:00:00Z

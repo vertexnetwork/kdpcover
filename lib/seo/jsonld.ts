@@ -26,13 +26,16 @@ export function websiteJsonLd() {
 
 export function organizationJsonLd() {
   const sisterSites = loadSisterSites().map((s) => s.url);
+  // External identity first (Knowledge-Graph reconciliation), then the owned
+  // Vertex Network spokes as related properties.
+  const sameAs = ["https://github.com/vertexnetwork", ...sisterSites];
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteConfig.name,
     url: SITE_URL,
     logo: `${SITE_URL}/icon-512.png`,
-    sameAs: sisterSites,
+    sameAs,
   };
 }
 
@@ -76,10 +79,14 @@ export function productJsonLd(sku: Sku) {
   };
 }
 
-export function faqJsonLd(faq: readonly FaqLike[]) {
+export function faqJsonLd(faq: readonly FaqLike[], speakableSelectors?: string[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    // Voice-assistant hint (VEO): which DOM regions hold spoken-answer text.
+    ...(speakableSelectors?.length
+      ? { speakable: { "@type": "SpeakableSpecification", cssSelector: speakableSelectors } }
+      : {}),
     mainEntity: faq.map((qa) => ({
       "@type": "Question",
       name: qa.q,
