@@ -215,7 +215,7 @@ export default function HomePage() {
         </div>
 
         <h2 className="mb-4 mt-12 text-2xl">Frequently asked</h2>
-        <dl className="space-y-6">
+        <dl id="faq" className="space-y-6">
           {siteFacts.faq.map((qa) => (
             <div key={qa.q}>
               <dt className="font-medium text-(--color-on-bg)">{qa.q}</dt>
@@ -245,7 +245,9 @@ export default function HomePage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(siteFacts.faq)) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd(siteFacts.faq, ["#faq dt", "#faq dd"])),
+        }}
       />
       <script
         type="application/ld+json"

@@ -1,0 +1,18 @@
+# ai.txt — AI usage policy for https://kdpcover.pro
+# Synced from public/ai-bots.json. See also /llms.txt and /llms-full.txt.
+
+User-Agent: *
+Allow: /
+Disallow: /api/
+
+# Explicitly permitted AI crawlers:
+Allow-Agent: GPTBot
+Allow-Agent: ClaudeBot
+Allow-Agent: Google-Extended
+Allow-Agent: PerplexityBot
+Allow-Agent: CCBot
+Allow-Agent: Bingbot
+Allow-Agent: Applebot-Extended
+
+Sitemap: https://kdpcover.pro/sitemap.xml
+Structured-Data: https://kdpcover.pro/llms-full.txt

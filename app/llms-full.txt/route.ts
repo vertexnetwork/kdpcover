@@ -48,6 +48,10 @@ export async function GET() {
     `${siteConfig.name} is a free KDP cover calculator that computes the exact spine width and full-cover dimensions for Amazon KDP paperback and case-laminate hardcover books from page count, trim size, and paper type. It is verified against Amazon's official KDP cover-template generator and runs entirely in the browser with no login.`,
   );
   out.push("");
+  out.push(
+    `Provenance: every multiplier and formula in this document was last reconciled against Amazon KDP's official cover-template generator on ${siteFacts.verifiedDate}. Multipliers are sourced from KDP Help (see Authoritative sources).`,
+  );
+  out.push("");
 
   out.push("## Spine multipliers (inches per page)");
   for (const m of siteFacts.multipliers) {

@@ -12,6 +12,10 @@ export const siteFacts = {
     description:
       "A precision client-side calculator for Amazon KDP paperback and case-laminate hardcover covers. Computes spine width, full cover dimensions, and safe-zone diagrams.",
   },
+  // Last date every multiplier and formula was reconciled against Amazon KDP's
+  // official cover-template generator. Surfaced in /about, /llms.txt and
+  // /llms-full.txt as a provenance/freshness signal for search and LLMs.
+  verifiedDate: "2026-05-15",
   multipliers: [
     { format: "Paperback", paper: "White (B&W interior)", value: 0.002252, unit: "in/page" },
     { format: "Paperback", paper: "Cream (B&W interior)", value: 0.0025, unit: "in/page" },
@@ -65,7 +69,7 @@ export const siteFacts = {
   faq: [
     {
       q: "How do I calculate my KDP book cover size?",
-      a: "Choose paperback or hardcover, pick your trim size and paper type, and enter your interior page count. The calculator multiplies the page count by KDP's paper multiplier to get the spine width, then adds trim, bleed, and (for hardcover) hinge and wrap to produce the exact full-cover width and height.",
+      a: "Multiply your interior page count by KDP's paper multiplier to get the spine width, then add trim size and bleed for the full cover. In the calculator, choose paperback or hardcover, pick your trim size and paper type, and enter the page count — it adds trim, bleed, and (for hardcover) hinge and wrap to produce the exact full-cover width and height.",
     },
     {
       q: "What size should a KDP paperback cover be?",
@@ -73,7 +77,7 @@ export const siteFacts = {
     },
     {
       q: "Is this the same as Amazon's official KDP cover calculator?",
-      a: "It uses the same published KDP formulas and every value is golden-tested against Amazon's official cover-template generator. The difference: it runs entirely in your browser with no Amazon login, and adds a live safe-zone diagram and a downloadable print-ready template.",
+      a: "Yes — it uses the same published KDP formulas, and every value is golden-tested against Amazon's official cover-template generator. The difference: it runs entirely in your browser with no Amazon login, and adds a live safe-zone diagram and a downloadable print-ready template.",
     },
     {
       q: "What is the Kindle eBook cover size?",
@@ -117,7 +121,7 @@ export const siteFacts = {
     },
     {
       q: "What file format does KDP require for cover upload?",
-      a: "A single flattened PDF combining back cover, spine, and front cover, with fonts embedded, no crop marks, 300 DPI minimum, CMYK preferred. Files should be 40 MB or less; 650 MB is the hard limit.",
+      a: "A single flattened PDF with fonts embedded, at 300 DPI minimum and CMYK color. The PDF should combine back cover, spine, and front cover with no crop marks; keep it 40 MB or less (650 MB is the hard limit).",
     },
   ],
   citations: [
