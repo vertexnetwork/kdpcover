@@ -131,6 +131,32 @@ export default function HomePage() {
         <ProofStrip />
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-warm-300 bg-gradient-to-br from-warm-50 to-white p-5 sm:p-6">
+          <div className="max-w-xl">
+            <p className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wide text-warm-700">
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+              Before you upload
+            </p>
+            <h2 className="mt-1 font-display text-xl sm:text-2xl">
+              Will your finished cover pass KDP review?
+            </h2>
+            <p className="mt-1.5 text-sm text-sage-800">
+              The calculator gives you the dimensions. <strong>Cover Pass-Check</strong> reads your
+              finished file and flags wrong size, missing bleed, low DPI, RGB color, and unembedded
+              fonts — before KDP rejects it.
+            </p>
+          </div>
+          <Link
+            href="/cover-pass-check"
+            className="inline-flex items-center gap-2 rounded-md bg-(--color-on-bg) px-5 py-3 text-sm font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
+          >
+            See Cover Pass-Check
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
         <MultiplierTable />
 

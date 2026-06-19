@@ -59,7 +59,7 @@ export const siteConfig = {
   nav: {
     primary: [
       { href: "/", label: "Calculator" },
-      { href: "/templates", label: "Templates" },
+      { href: "/cover-pass-check", label: "Pass-Check" },
       { href: "/guide", label: "Guide" },
       { href: "/embed", label: "Embed" },
       { href: "/about", label: "About" },
@@ -67,6 +67,8 @@ export const siteConfig = {
     footer: {
       product: [
         { href: "/", label: "Calculator" },
+        { href: "/cover-pass-check", label: "Cover Pass-Check" },
+        { href: "/templates", label: "Bonus templates" },
         { href: "/embed", label: "Embed widget" },
         { href: "/extension", label: "Chrome extension" },
       ],
@@ -100,6 +102,14 @@ export const siteConfig = {
       chromeWebStoreUrl: process.env.NEXT_PUBLIC_CHROME_WEB_STORE_URL ?? "",
     },
     proEnabled: false,
+    // Cover Pass-Check — the paid, license-gated preflight tool. The public
+    // landing (/cover-pass-check) always renders so SEO compounds; the gated
+    // tool routes (/pass-check, /pass-check/unlock) 404 until this flag is on.
+    preflight: {
+      enabled: (process.env.NEXT_PUBLIC_PREFLIGHT_ENABLED ?? "0") === "1",
+      route: "/pass-check",
+      landing: "/cover-pass-check",
+    },
     email: {
       // Lead-magnet: KDP-spec-change alerts. No transactional email is sent on
       // submission; subscribers are added to a Resend audience for bulk
@@ -126,12 +136,18 @@ export const siteConfig = {
   },
 
   monetization: {
-    // Single digital product, sold through Gumroad (Merchant of Record —
-    // handles global sales tax / EU VAT). Set the full product permalink in
-    // NEXT_PUBLIC_GUMROAD_PRODUCT_URL; blank keeps the store in "notify me"
-    // state so SEO can compound before launch.
+    // Cover Pass-Check, sold through Gumroad (Merchant of Record — handles
+    // global sales tax / EU VAT) as one product with two versions: Author and
+    // Studio. Set the full product permalink in NEXT_PUBLIC_GUMROAD_PRODUCT_URL
+    // and flip NEXT_PUBLIC_GUMROAD_ENABLED=1 to go live; blank/0 keeps the CTAs
+    // in "notify me" state so SEO can compound before launch.
     gumroad: {
       productUrl: process.env.NEXT_PUBLIC_GUMROAD_PRODUCT_URL ?? "",
+      // Direct link to the Studio version, for the "Upgrade to Studio" card.
+      studioUrl: process.env.NEXT_PUBLIC_GUMROAD_STUDIO_URL ?? "",
+      enabled: (process.env.NEXT_PUBLIC_GUMROAD_ENABLED ?? "0") === "1",
+      price: Number(process.env.NEXT_PUBLIC_GUMROAD_PRICE ?? "19"),
+      studioPrice: Number(process.env.NEXT_PUBLIC_GUMROAD_STUDIO_PRICE ?? "49"),
     },
   },
 

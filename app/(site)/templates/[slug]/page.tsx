@@ -56,6 +56,13 @@ export default async function ProductPage({ params }: Params) {
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <header>
+          <div className="mb-4 rounded-md border border-sage-300 bg-sage-50/60 px-4 py-3 text-sm text-sage-800">
+            Included free with{" "}
+            <Link href="/cover-pass-check" className="font-medium text-(--color-accent) hover:opacity-80">
+              Cover Pass-Check
+            </Link>{" "}
+            — the tool that confirms your finished cover will pass KDP review.
+          </div>
           {sku.highlight && (
             <span className="mb-3 inline-flex items-center rounded-full bg-warm-100 px-2.5 py-0.5 text-xs font-medium text-warm-700">
               Bestseller

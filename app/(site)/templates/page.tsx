@@ -21,6 +21,19 @@ export default function TemplatesStorePage() {
 
   return (
     <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-card border border-sage-300 bg-sage-50/60 px-5 py-4">
+        <p className="text-sm text-sage-800">
+          <strong>Now a bonus.</strong> This 2,500-template pack is included free with{" "}
+          <strong>Cover Pass-Check</strong> — the tool that checks your finished cover will pass KDP
+          review.
+        </p>
+        <Link
+          href="/cover-pass-check"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-(--color-on-bg) px-4 py-2 text-sm font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
+        >
+          See Cover Pass-Check
+        </Link>
+      </div>
       <header className="max-w-3xl">
         <p className="text-xs uppercase tracking-wide text-(--color-accent)">Templates</p>
         <h1 className="mt-2 text-3xl leading-tight sm:text-5xl">

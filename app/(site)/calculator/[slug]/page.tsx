@@ -6,7 +6,6 @@ import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
 import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid } from "@kdp/limits";
 import { Calculator } from "@/components/calculator/Calculator";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
-import { recommendSkuForCalc, STORE_PATH } from "@/lib/templates/catalog";
 import { ArrowRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 
@@ -107,7 +106,7 @@ export default async function PseoPage({ params }: Params) {
       </div>
 
       <section className="mt-10">
-        <PseoTemplateCta spineWidthIn={out.spineWidthIn} />
+        <PseoPassCheckCta spineWidthIn={out.spineWidthIn} />
       </section>
 
       <section className="mt-12">
@@ -141,23 +140,26 @@ export default async function PseoPage({ params }: Params) {
   );
 }
 
-function PseoTemplateCta({ spineWidthIn }: { spineWidthIn: number }) {
-  const sku = recommendSkuForCalc();
+function PseoPassCheckCta({ spineWidthIn }: { spineWidthIn: number }) {
   return (
     <div className="rounded-card border border-warm-300 bg-gradient-to-br from-warm-50 to-(--color-surface) p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-md">
-          <p className="text-xs uppercase tracking-wide text-warm-700">Skip the layout</p>
+          <p className="text-xs uppercase tracking-wide text-warm-700">Before you upload</p>
           <h3 className="mt-1 text-lg font-display sm:text-xl">
-            Get a print-ready template with the {spineWidthIn.toFixed(4)}″ spine pre-set
+            Finished your cover? Pass-check it against this exact {spineWidthIn.toFixed(4)}″-spine
+            spec
           </h3>
-          <p className="mt-1.5 text-sm text-sage-800">{sku.hook}</p>
+          <p className="mt-1.5 text-sm text-sage-800">
+            Cover Pass-Check reads your finished file and flags wrong size, missing bleed, low DPI,
+            and unembedded fonts before KDP rejects it.
+          </p>
         </div>
         <Link
-          href={`${STORE_PATH}/${sku.slug}`}
+          href={siteConfig.features.preflight.landing}
           className="inline-flex items-center gap-2 rounded-md bg-(--color-on-bg) px-4 py-2.5 text-sm font-medium text-(--color-on-accent) shadow-sm hover:bg-(--color-accent)"
         >
-          See the {sku.name} — ${sku.priceUsd}
+          Check my cover
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
       </div>

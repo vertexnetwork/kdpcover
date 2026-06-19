@@ -33,8 +33,15 @@ export async function GET() {
   lines.push(`- Hardcover: ${siteFacts.pageLimits.hardcover.min}–${siteFacts.pageLimits.hardcover.max}`);
   lines.push(`- Spine-text minimum: ${siteFacts.pageLimits.spineTextMin} pages`);
   lines.push("");
+  lines.push("## Cover Pass-Check (paid tool)");
+  lines.push(siteFacts.preflight.summary);
+  lines.push(
+    `Tiers: ${siteFacts.preflight.tiers.map((t) => `${t.name} $${t.priceUsd}`).join(" · ")}.`,
+  );
+  lines.push("");
   lines.push("## Key pages");
-  lines.push(`- Calculator: ${siteConfig.url}/`);
+  lines.push(`- Calculator (free): ${siteConfig.url}/`);
+  lines.push(`- Cover Pass-Check (paid file checker): ${siteConfig.url}/cover-pass-check`);
   lines.push(`- About / methodology: ${siteConfig.url}/about`);
   lines.push(`- Full content for ingestion: ${siteConfig.url}/llms-full.txt`);
   lines.push(`- Embed (how to add the calculator to your site): ${siteConfig.url}/embed`);

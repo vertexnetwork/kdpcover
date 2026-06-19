@@ -5,6 +5,17 @@ import type { Format, Paper } from "@kdp/calc";
 
 export type TemplateBuySource = "store-card" | "product-page" | "calculator-cta" | "pseo";
 
+/** Where a Pass-Check CTA was shown. */
+export type PassCheckSource =
+  | "landing"
+  | "unlock"
+  | "calculator-cta"
+  | "pseo"
+  | "home"
+  | "templates";
+
+type PassCheckTier = "author" | "studio";
+
 type EmailSource = "about" | "guide" | "calculator" | "extension" | "templates";
 type AffiliatePlacement = "recommended-page" | "calculator-cta" | "footer";
 
@@ -19,6 +30,11 @@ export type AnalyticsEvent =
   | { name: "template_buy_click"; props: { source: TemplateBuySource; price: number } }
   | { name: "template_notify_click"; props: { source: TemplateBuySource } }
   | { name: "template_upsell_view"; props: { source: TemplateBuySource } }
+  | { name: "passcheck_buy_click"; props: { source: PassCheckSource; price: number } }
+  | { name: "passcheck_notify_click"; props: { source: PassCheckSource } }
+  | { name: "passcheck_unlock_attempt"; props: Record<string, never> }
+  | { name: "passcheck_unlock_success"; props: { tier: PassCheckTier } }
+  | { name: "passcheck_run"; props: { kind: string; overall: string; tier: PassCheckTier } }
   | { name: "vertex_footer_opened"; props: Record<string, never> }
   | { name: "subscribe_submit"; props: { source: EmailSource } }
   | { name: "subscribe_success"; props: { source: EmailSource } }

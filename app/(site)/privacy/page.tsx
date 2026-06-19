@@ -59,6 +59,11 @@ export default function PrivacyPage() {
         Inputs (format, paper, page count, trim size) are stored only in the URL hash on your
         device and are never transmitted to our servers.
       </p>
+      <p>
+        The same holds for <strong>Cover Pass-Check</strong>: any cover file you check (PDF, PNG, or
+        JPG) is read and analyzed entirely in your browser. Your file is never uploaded, stored, or
+        transmitted to our servers.
+      </p>
 
       <h2>Anonymous analytics</h2>
       <p>
@@ -79,7 +84,7 @@ export default function PrivacyPage() {
       <h2>Advertising</h2>
       <p>
         {siteConfig.features.ads.provider === "none"
-          ? "We do not run advertising. The site is monetised solely by sales of digital templates through Gumroad."
+          ? "We do not run advertising. The site is monetised solely by sales of Cover Pass-Check (and its bundled template pack) through Gumroad."
           : `We run ads through ${siteConfig.features.ads.provider}, gated by your cookie consent.`}
       </p>
 
@@ -94,7 +99,10 @@ export default function PrivacyPage() {
 
       <h2>Cookies</h2>
       <p>
-        We use no first-party cookies. Optional third-party cookies are gated by the consent
+        We set one first-party cookie, and only if you unlock Cover Pass-Check: a signed,
+        httpOnly <code>kc_pass</code> cookie that remembers your purchase so the tool stays
+        unlocked. It contains no personal data — only a hash of your license key and your tier — and
+        is never used for tracking. All other cookies are optional and gated by the consent
         banner. Gumroad sets checkout cookies only after you click a buy button. No
         cookies are set for advertising unless you opt in.
       </p>

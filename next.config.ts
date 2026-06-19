@@ -24,6 +24,16 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  turbopack: {
+    resolveAlias: {
+      // mupdf-wasm references Node built-ins ("module"/createRequire, fs, path)
+      // behind a runtime isNode guard the browser never hits. Point them at an
+      // empty stub for the browser bundle so Turbopack can resolve them.
+      module: { browser: "./lib/node-stub.js" },
+      fs: { browser: "./lib/node-stub.js" },
+      path: { browser: "./lib/node-stub.js" },
+    },
+  },
   async headers() {
     return [
       {
