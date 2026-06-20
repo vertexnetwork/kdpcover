@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { calcCover } from "@kdp/calc";
 import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
-import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid } from "@kdp/limits";
+import { FORMAT_LABEL, isPageCountValid } from "@kdp/limits";
 import { Calculator } from "@/components/calculator/Calculator";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
 import { ArrowRight } from "lucide-react";
@@ -22,11 +22,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const parsed = parseSlug(slug);
   if (!parsed) return { title: "Not found" };
   const out = calcCover(parsed);
-  const title = `${FORMAT_LABEL[parsed.format]} ${PAPER_LABEL[parsed.paper]} ${parsed.pageCount}-page spine — ${out.spineWidthIn.toFixed(4)}″`;
-  const description = `KDP cover dimensions for a ${parsed.pageCount}-page ${parsed.paper.replace("color-", "")} ${parsed.format} at ${parsed.trimWidthIn} × ${parsed.trimHeightIn} in: spine ${out.spineWidthIn.toFixed(4)}″, full cover ${out.fullCoverWidthIn.toFixed(2)} × ${out.fullCoverHeightIn.toFixed(2)} in.`;
+  const paperShort = parsed.paper.replace("color-", "");
+  const trim = `${parsed.trimWidthIn}×${parsed.trimHeightIn}`;
+  // Title leads with task intent ("KDP cover size") + the exact combo so it
+  // matches pre-computation queries, and deliberately omits the spine number so
+  // the SERP snippet can't fully answer the search (that would kill the click).
+  const title = `KDP cover size: ${parsed.pageCount}-page ${trim} ${paperShort} ${parsed.format}`;
+  // Description sells the click — live tool, safe-zone diagram, free template —
+  // without handing over the dimensions.
+  const description = `Get the exact spine width, full-cover dimensions, and a live safe-zone diagram for a ${parsed.pageCount}-page ${paperShort} ${parsed.format} at ${parsed.trimWidthIn} × ${parsed.trimHeightIn} in — plus a free print-ready KDP template. Calculate instantly, no login.`;
   return {
     title: title.slice(0, 60),
-    description: description.slice(0, 155),
+    description: description.slice(0, 158),
     alternates: { canonical: `/calculator/${slug}` },
     openGraph: {
       title,
@@ -46,8 +53,11 @@ export default async function PseoPage({ params }: Params) {
   const out = calcCover(parsed);
   const neighbors = neighborSlugs(parsed);
 
+  const paperShort = parsed.paper.replace("color-", "");
+  const trim = `${parsed.trimWidthIn}×${parsed.trimHeightIn}`;
+
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Calculator", url: `${siteConfig.url}/` },
+    { name: "KDP cover calculator", url: `${siteConfig.url}/` },
     { name: FORMAT_LABEL[parsed.format], url: `${siteConfig.url}/` },
     { name: `${parsed.pageCount} pages`, url: `${siteConfig.url}/calculator/${slug}` },
   ]);
@@ -81,7 +91,7 @@ export default async function PseoPage({ params }: Params) {
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <nav aria-label="Breadcrumb" className="text-xs text-sage-700">
         <Link href="/" className="hover:text-(--color-accent)">
-          Calculator
+          KDP cover calculator
         </Link>
         <span className="mx-1">›</span>
         <span>{FORMAT_LABEL[parsed.format]}</span>
@@ -90,15 +100,14 @@ export default async function PseoPage({ params }: Params) {
       </nav>
 
       <h1 className="mt-3 text-3xl leading-tight sm:text-4xl">
-        {FORMAT_LABEL[parsed.format]} · {PAPER_LABEL[parsed.paper]} · {parsed.pageCount} pages — spine{" "}
-        {out.spineWidthIn.toFixed(4)}″
+        KDP cover size for a {parsed.pageCount}-page {trim} {paperShort} {parsed.format}
       </h1>
       <p className="mt-3 max-w-2xl text-sage-800">
-        For a {parsed.trimWidthIn} × {parsed.trimHeightIn} in {parsed.format} with{" "}
-        {PAPER_LABEL[parsed.paper].toLowerCase()} interior pages, the KDP-spec cover is{" "}
-        {out.fullCoverWidthIn.toFixed(4)} × {out.fullCoverHeightIn.toFixed(4)} in (spine{" "}
-        {out.spineWidthIn.toFixed(4)}″ / {out.spineWidthMm.toFixed(2)} mm). Tweak any field below
-        to recalculate live.
+        Enter your details below and this free <strong>KDP cover calculator</strong> returns the
+        exact spine width, full-cover dimensions, and a safe-zone diagram for a {parsed.pageCount}
+        -page {parsed.trimWidthIn} × {parsed.trimHeightIn} in {paperShort} {parsed.format} — then
+        download a print-ready template. Adjust any field to recompute live, or use it as a{" "}
+        {parsed.format} spine-width calculator for any page count.
       </p>
 
       <div className="mt-8">

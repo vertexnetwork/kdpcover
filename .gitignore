@@ -48,3 +48,6 @@ next-env.d.ts
 
 # claude code local state
 .claude
+
+# search-console / analytics exports (local analysis only)
+/gsc-exports

@@ -14,11 +14,14 @@ export default function AboutPage() {
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="text-3xl sm:text-4xl">About {siteConfig.name}</h1>
       <p className="mt-3 text-sage-800">
-        {siteConfig.name} is an independent precision calculator for Amazon KDP paperback and
-        case-laminate hardcover covers. The KDP white-paper paperback spine width formula is
-        0.002252 inches per page; cream is 0.0025; standard color is 0.002252; premium color and
-        case-laminate hardcover are both 0.002347. Multiply your interior page count by the right
-        multiplier and you have the spine width.
+        {siteConfig.name} is an independent precision tool for Amazon KDP paperback and
+        case-laminate hardcover covers. It computes exact spine width, full-cover dimensions, bleed,
+        and safe zones from your trim size, paper type, and page count — verified against
+        Amazon&rsquo;s official cover-template generator. Run it on the{" "}
+        <Link href="/" className="underline hover:text-(--color-accent)">
+          KDP cover calculator
+        </Link>
+        ; this page covers how it works and the sources behind it.
       </p>
 
       <h2 className="mt-8 text-2xl">Methodology</h2>
