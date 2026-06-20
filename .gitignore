@@ -51,3 +51,6 @@ next-env.d.ts
 
 # search-console / analytics exports (local analysis only)
 /gsc-exports
+
+# generated Gumroad listing imagery (uploaded to Gumroad, not the repo)
+/temp

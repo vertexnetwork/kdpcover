@@ -20,6 +20,7 @@
     "format": "prettier --write .",
     "build:ext": "cd extension && vite build",
     "build:templates": "tsx scripts/build-templates.ts",
+    "build:images": "tsx scripts/build-images.ts",
     "prepare": "husky || true"
   },
   "dependencies": {
