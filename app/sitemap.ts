@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const slugs = curatedPseoSlugs();
   const staticUrls = [
     "",
+    "/cover-pass-check",
     "/about",
     "/contact",
     "/guide",
@@ -37,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteConfig.url}${u || "/"}`,
       lastModified: BUILD_LAST_MOD,
       changeFrequency: "weekly" as const,
-      priority: u === "" ? 1.0 : u === STORE_PATH ? 0.9 : 0.7,
+      priority: u === "" ? 1.0 : u === "/cover-pass-check" ? 0.9 : u === STORE_PATH ? 0.8 : 0.7,
     })),
     ...CATALOG.map((sku) => ({
       url: `${siteConfig.url}${STORE_PATH}/${sku.slug}`,

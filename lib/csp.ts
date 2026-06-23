@@ -17,7 +17,10 @@ export type CspProviders = {
 };
 
 export function buildCSP(providers: CspProviders = {}): string {
-  const scriptSrc: string[] = ["'self'", "'unsafe-inline'"];
+  // 'wasm-unsafe-eval' lets the Cover Pass-Check engine instantiate the
+  // mupdf-wasm module client-side; it permits WebAssembly compilation only, not
+  // arbitrary eval.
+  const scriptSrc: string[] = ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"];
   const connectSrc: string[] = ["'self'", "https://vitals.vercel-insights.com"];
   const imgSrc: string[] = ["'self'", "data:", "blob:"];
   const styleSrc: string[] = ["'self'", "'unsafe-inline'"];
@@ -64,6 +67,8 @@ export function buildCSP(providers: CspProviders = {}): string {
     `img-src ${imgSrc.join(" ")}`,
     `font-src ${fontSrc.join(" ")}`,
     `connect-src ${connectSrc.join(" ")}`,
+    // mupdf-wasm may run inside a blob-sourced worker depending on the bundle.
+    `worker-src 'self' blob:`,
     `frame-src ${frameSrc.join(" ")}`,
     `frame-ancestors 'self'`,
     `base-uri 'self'`,

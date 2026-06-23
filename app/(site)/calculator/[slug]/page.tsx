@@ -3,10 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { calcCover } from "@kdp/calc";
 import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
-import { FORMAT_LABEL, PAPER_LABEL, isPageCountValid } from "@kdp/limits";
+import { FORMAT_LABEL, isPageCountValid } from "@kdp/limits";
 import { Calculator } from "@/components/calculator/Calculator";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
-import { recommendSkuForCalc, STORE_PATH } from "@/lib/templates/catalog";
 import { ArrowRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 
@@ -23,11 +22,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const parsed = parseSlug(slug);
   if (!parsed) return { title: "Not found" };
   const out = calcCover(parsed);
-  const title = `${FORMAT_LABEL[parsed.format]} ${PAPER_LABEL[parsed.paper]} ${parsed.pageCount}-page spine — ${out.spineWidthIn.toFixed(4)}″`;
-  const description = `KDP cover dimensions for a ${parsed.pageCount}-page ${parsed.paper.replace("color-", "")} ${parsed.format} at ${parsed.trimWidthIn} × ${parsed.trimHeightIn} in: spine ${out.spineWidthIn.toFixed(4)}″, full cover ${out.fullCoverWidthIn.toFixed(2)} × ${out.fullCoverHeightIn.toFixed(2)} in.`;
+  const paperShort = parsed.paper.replace("color-", "");
+  const trim = `${parsed.trimWidthIn}×${parsed.trimHeightIn}`;
+  // Title leads with task intent ("KDP cover size") + the exact combo so it
+  // matches pre-computation queries, and deliberately omits the spine number so
+  // the SERP snippet can't fully answer the search (that would kill the click).
+  const title = `KDP cover size: ${parsed.pageCount}-page ${trim} ${paperShort} ${parsed.format}`;
+  // Description sells the click — live tool, safe-zone diagram, free template —
+  // without handing over the dimensions.
+  const description = `Get the exact spine width, full-cover dimensions, and a live safe-zone diagram for a ${parsed.pageCount}-page ${paperShort} ${parsed.format} at ${parsed.trimWidthIn} × ${parsed.trimHeightIn} in — plus a free print-ready KDP template. Calculate instantly, no login.`;
   return {
     title: title.slice(0, 60),
-    description: description.slice(0, 155),
+    description: description.slice(0, 158),
     alternates: { canonical: `/calculator/${slug}` },
     openGraph: {
       title,
@@ -47,8 +53,11 @@ export default async function PseoPage({ params }: Params) {
   const out = calcCover(parsed);
   const neighbors = neighborSlugs(parsed);
 
+  const paperShort = parsed.paper.replace("color-", "");
+  const trim = `${parsed.trimWidthIn}×${parsed.trimHeightIn}`;
+
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Calculator", url: `${siteConfig.url}/` },
+    { name: "KDP cover calculator", url: `${siteConfig.url}/` },
     { name: FORMAT_LABEL[parsed.format], url: `${siteConfig.url}/` },
     { name: `${parsed.pageCount} pages`, url: `${siteConfig.url}/calculator/${slug}` },
   ]);
@@ -82,7 +91,7 @@ export default async function PseoPage({ params }: Params) {
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <nav aria-label="Breadcrumb" className="text-xs text-sage-700">
         <Link href="/" className="hover:text-(--color-accent)">
-          Calculator
+          KDP cover calculator
         </Link>
         <span className="mx-1">›</span>
         <span>{FORMAT_LABEL[parsed.format]}</span>
@@ -91,15 +100,14 @@ export default async function PseoPage({ params }: Params) {
       </nav>
 
       <h1 className="mt-3 text-3xl leading-tight sm:text-4xl">
-        {FORMAT_LABEL[parsed.format]} · {PAPER_LABEL[parsed.paper]} · {parsed.pageCount} pages — spine{" "}
-        {out.spineWidthIn.toFixed(4)}″
+        KDP cover size for a {parsed.pageCount}-page {trim} {paperShort} {parsed.format}
       </h1>
       <p className="mt-3 max-w-2xl text-sage-800">
-        For a {parsed.trimWidthIn} × {parsed.trimHeightIn} in {parsed.format} with{" "}
-        {PAPER_LABEL[parsed.paper].toLowerCase()} interior pages, the KDP-spec cover is{" "}
-        {out.fullCoverWidthIn.toFixed(4)} × {out.fullCoverHeightIn.toFixed(4)} in (spine{" "}
-        {out.spineWidthIn.toFixed(4)}″ / {out.spineWidthMm.toFixed(2)} mm). Tweak any field below
-        to recalculate live.
+        Enter your details below and this free <strong>KDP cover calculator</strong> returns the
+        exact spine width, full-cover dimensions, and a safe-zone diagram for a {parsed.pageCount}
+        -page {parsed.trimWidthIn} × {parsed.trimHeightIn} in {paperShort} {parsed.format} — then
+        download a print-ready template. Adjust any field to recompute live, or use it as a{" "}
+        {parsed.format} spine-width calculator for any page count.
       </p>
 
       <div className="mt-8">
@@ -107,7 +115,7 @@ export default async function PseoPage({ params }: Params) {
       </div>
 
       <section className="mt-10">
-        <PseoTemplateCta spineWidthIn={out.spineWidthIn} />
+        <PseoPassCheckCta spineWidthIn={out.spineWidthIn} />
       </section>
 
       <section className="mt-12">
@@ -141,23 +149,26 @@ export default async function PseoPage({ params }: Params) {
   );
 }
 
-function PseoTemplateCta({ spineWidthIn }: { spineWidthIn: number }) {
-  const sku = recommendSkuForCalc();
+function PseoPassCheckCta({ spineWidthIn }: { spineWidthIn: number }) {
   return (
     <div className="rounded-card border border-warm-300 bg-gradient-to-br from-warm-50 to-(--color-surface) p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-md">
-          <p className="text-xs uppercase tracking-wide text-warm-700">Skip the layout</p>
+          <p className="text-xs uppercase tracking-wide text-warm-700">Before you upload</p>
           <h3 className="mt-1 text-lg font-display sm:text-xl">
-            Get a print-ready template with the {spineWidthIn.toFixed(4)}″ spine pre-set
+            Finished your cover? Pass-check it against this exact {spineWidthIn.toFixed(4)}″-spine
+            spec
           </h3>
-          <p className="mt-1.5 text-sm text-sage-800">{sku.hook}</p>
+          <p className="mt-1.5 text-sm text-sage-800">
+            Cover Pass-Check reads your finished file and flags wrong size, missing bleed, low DPI,
+            and unembedded fonts before KDP rejects it.
+          </p>
         </div>
         <Link
-          href={`${STORE_PATH}/${sku.slug}`}
+          href={siteConfig.features.preflight.landing}
           className="inline-flex items-center gap-2 rounded-md bg-(--color-on-bg) px-4 py-2.5 text-sm font-medium text-(--color-on-accent) shadow-sm hover:bg-(--color-accent)"
         >
-          See the {sku.name} — ${sku.priceUsd}
+          Check my cover
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
       </div>

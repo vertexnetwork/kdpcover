@@ -17,9 +17,9 @@ export default function TermsPage() {
       <h2>1. The service</h2>
       <p>
         {siteConfig.name} (&ldquo;the service&rdquo;) is a free, client-side calculator for
-        Amazon KDP cover dimensions, with an optional paid template-pack and affiliate links.
-        It is independent and not affiliated with Amazon, Kindle Direct Publishing, or any
-        KDP-related trademark.
+        Amazon KDP cover dimensions, with an optional paid file-check tool (Cover Pass-Check), a
+        bundled template pack, and affiliate links. It is independent and not affiliated with
+        Amazon, Kindle Direct Publishing, or any KDP-related trademark.
       </p>
 
       <h2>2. Accuracy</h2>
@@ -40,11 +40,21 @@ export default function TermsPage() {
 
       <h2>4. Purchases</h2>
       <p>
-        Template-pack purchases are processed by Gumroad as Merchant of Record, including sales
-        tax and EU VAT. The license permits unlimited commercial use of the included files
-        (covers for unlimited books on KDP, IngramSpark, or elsewhere) but prohibits reselling
-        or redistributing the templates themselves as templates. We offer a no-questions-asked
-        refund within 7 days of purchase — email your receipt and we will process it.
+        Cover Pass-Check (and its bundled template pack) is sold through Gumroad as Merchant of
+        Record, including sales tax and EU VAT. A purchase grants a personal license to use the
+        tool and the included files; the template license permits unlimited commercial use (covers
+        for unlimited books on KDP, IngramSpark, or elsewhere) but prohibits reselling or
+        redistributing the templates themselves as templates. We offer a no-questions-asked refund
+        within 7 days of purchase — email your receipt and we will process it.
+      </p>
+      <p>
+        <strong>Cover Pass-Check is an automated advisory tool.</strong> It checks measurable
+        properties of the file you provide (dimensions, bleed, resolution, embedded fonts, color
+        space, page count, and file size) against KDP&rsquo;s published specifications and the book
+        details you enter. A &ldquo;pass&rdquo; result means those measured properties match the
+        expected spec; it is <em>not</em> a guarantee that Amazon KDP will accept your cover, which
+        also depends on your artwork, content, and KDP&rsquo;s own review. You remain responsible
+        for your final file.
       </p>
 
       <h2>5. Outbound links</h2>

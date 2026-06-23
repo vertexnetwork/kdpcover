@@ -124,6 +124,67 @@ export const siteFacts = {
       a: "A single flattened PDF with fonts embedded, at 300 DPI minimum and CMYK color. The PDF should combine back cover, spine, and front cover with no crop marks; keep it 40 MB or less (650 MB is the hard limit).",
     },
   ],
+  // Cover Pass-Check — the paid preflight tool. Single source for the landing
+  // page, llms.txt/llms-full.txt, and the product JSON-LD.
+  preflight: {
+    name: "Cover Pass-Check",
+    tagline: "Upload your finished KDP cover and know it will pass review — before you submit.",
+    summary:
+      "Cover Pass-Check is a paid, in-browser tool that checks your finished Amazon KDP cover file (PDF, PNG, or JPG) against KDP's spec and your exact book — full-cover size, bleed/wrap, resolution, embedded fonts, color space, single-page, and file size — and returns a pass/fail report with the fix for each problem. The file is parsed entirely in your browser and never uploaded.",
+    checks: [
+      "Full-cover size matches the exact dimensions for your trim, paper, and page count",
+      "Bleed (paperback) or wrap (hardcover) is present on every edge",
+      "Resolution is at least 300 DPI at the printed size",
+      "All fonts are embedded (PDF)",
+      "Color space is print-ready — CMYK preferred, RGB flagged",
+      "It's a single flattened page (PDF)",
+      "File size is within KDP's 40 MB recommended / 650 MB hard limits",
+    ],
+    tiers: [
+      {
+        id: "author",
+        name: "Author",
+        priceUsd: 19,
+        blurb: "For your book launch. Check one cover at a time, as many times as you need.",
+        features: [
+          "Single-file pass/fail report",
+          "Every check above, with the fix for each",
+          "2,500-template bonus pack + cheat sheet",
+          "Lifetime access + free spec updates",
+        ],
+      },
+      {
+        id: "studio",
+        name: "Studio",
+        priceUsd: 49,
+        blurb: "For volume publishers. Drop a whole folder of covers and get a pass/fail table.",
+        features: [
+          "Everything in Author",
+          "Batch mode — check many covers at once",
+          "Worst-first results table + CSV export",
+          "Built for low/no-content publishers shipping at scale",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How does Cover Pass-Check know if my cover will pass KDP review?",
+        a: "It reads your finished file in the browser and compares it to KDP's published spec and the exact dimensions for your trim, paper, and page count — full-cover size, bleed/wrap, resolution, embedded fonts, color space, page count, and file size. It reports each as pass, warn, or fail with the fix. It verifies the file's measurable properties; your artwork and KDP's own review are still yours to own, so a green report means the dimensions and spec are correct, not a guarantee of acceptance.",
+      },
+      {
+        q: "Is my cover file uploaded anywhere?",
+        a: "No. The entire check runs in your browser — the file never leaves your device and nothing is stored on a server. It's the same privacy-first approach as the free calculator.",
+      },
+      {
+        q: "What's the difference between Author and Studio?",
+        a: "Author ($19) checks one cover at a time — perfect for a single book launch. Studio ($49) adds batch mode: drop a whole folder of covers and get a worst-first pass/fail table with CSV export, built for publishers shipping many titles.",
+      },
+      {
+        q: "Do I get a refund if it doesn't help?",
+        a: "Yes — a 7-day, no-questions-asked refund through Gumroad. Email your receipt and we'll process it.",
+      },
+    ],
+  },
   citations: [
     { label: "KDP Paperback Cover Creation", url: "https://kdp.amazon.com/en_US/help/topic/G201953020" },
     { label: "KDP Hardcover Cover Creation", url: "https://kdp.amazon.com/en_US/help/topic/GDTKFJPNQCBTMRV6" },

@@ -48,3 +48,9 @@ next-env.d.ts
 
 # claude code local state
 .claude
+
+# search-console / analytics exports (local analysis only)
+/gsc-exports
+
+# generated Gumroad listing imagery (uploaded to Gumroad, not the repo)
+/temp

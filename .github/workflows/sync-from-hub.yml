@@ -13,7 +13,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Fetch hub artifacts
         run: |
@@ -25,7 +25,7 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/vertexnetwork/hub/main/crawler/app-ads.txt -o public/app-ads.txt
 
       - name: Open sync PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "chore(hub): sync canonical artifacts"
           title: "chore(hub): sync canonical artifacts"

@@ -63,7 +63,7 @@ function buildHumansTxt(): string {
     "/* SITE */",
     `Last update: ${today}`,
     "Standards: HTML5, CSS3",
-    "Components: Next.js 15, React 19, Tailwind v4",
+    "Components: Next.js 16, React 19, Tailwind v4",
     "Software: Vercel, GitHub",
     "",
   ].join("\n");

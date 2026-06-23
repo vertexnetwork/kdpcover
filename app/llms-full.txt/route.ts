@@ -103,6 +103,25 @@ export async function GET() {
     out.push("");
   }
 
+  out.push("## Cover Pass-Check (paid preflight tool)");
+  out.push(siteFacts.preflight.summary);
+  out.push("");
+  out.push("What it checks:");
+  for (const c of siteFacts.preflight.checks) out.push(`- ${c}`);
+  out.push("");
+  out.push("A green report means the file's measurable properties match KDP's spec for the");
+  out.push("specified book; it is not a guarantee of acceptance (artwork and KDP's own review");
+  out.push("are out of scope). The file is parsed entirely in the browser and never uploaded.");
+  out.push("");
+  for (const t of siteFacts.preflight.tiers) {
+    out.push(`### ${t.name} — $${t.priceUsd}`);
+    out.push(t.blurb);
+    for (const f of t.features) out.push(`- ${f}`);
+    out.push("");
+  }
+  out.push(`Landing page: ${siteConfig.url}/cover-pass-check`);
+  out.push("");
+
   out.push("## Authoritative sources");
   for (const c of siteFacts.citations) out.push(`- ${c.label}: ${c.url}`);
 

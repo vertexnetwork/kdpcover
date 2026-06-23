@@ -33,8 +33,7 @@ import { join } from "node:path";
 import PDFDocument from "pdfkit";
 // svg-to-pdfkit is CJS without proper types
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const SVGtoPDF: (doc: PDFKit.PDFDocument, svg: string, x?: number, y?: number, options?: Record<string, unknown>) => void =
-  require("svg-to-pdfkit");
+const SVGtoPDF = require("svg-to-pdfkit") as (doc: PDFKit.PDFDocument, svg: string, x?: number, y?: number, options?: Record<string, unknown>) => void;
 
 import { calcCover } from "../lib/kdp/calc";
 import { buildTemplateSvg } from "../lib/kdp/svg-template";

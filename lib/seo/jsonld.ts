@@ -79,6 +79,27 @@ export function productJsonLd(sku: Sku) {
   };
 }
 
+export function passCheckJsonLd() {
+  const pf = siteFacts.preflight;
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: pf.name,
+    url: `${SITE_URL}/cover-pass-check`,
+    applicationCategory: "DesignApplication",
+    operatingSystem: "Any (web)",
+    description: pf.summary,
+    offers: pf.tiers.map((t) => ({
+      "@type": "Offer",
+      name: t.name,
+      price: String(t.priceUsd),
+      priceCurrency: "USD",
+      url: `${SITE_URL}/cover-pass-check`,
+    })),
+    publisher: { "@type": "Organization", name: siteConfig.name, url: SITE_URL },
+  };
+}
+
 export function faqJsonLd(faq: readonly FaqLike[], speakableSelectors?: string[]) {
   return {
     "@context": "https://schema.org",
