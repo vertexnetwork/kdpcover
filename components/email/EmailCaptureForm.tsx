@@ -4,12 +4,13 @@ import { useState } from "react";
 import { Bell, CheckCircle2 } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { track } from "@/lib/analytics/track";
+import { useImpression } from "@/lib/analytics/use-impression";
 
 type Status = "idle" | "submitting" | "ok" | "error";
 
 type Props = {
   /** Where this form sits in the UI — fires through to analytics for funnel tagging. */
-  source: "about" | "guide" | "calculator" | "extension" | "templates";
+  source: "about" | "guide" | "calculator" | "extension" | "templates" | "footer";
   className?: string;
 };
 
@@ -26,6 +27,12 @@ export function EmailCaptureForm({ source, className }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
+
+  // Impression: fires once when the form scrolls into view — the denominator
+  // for subscribe rate per surface.
+  const viewRef = useImpression<HTMLFormElement>(() => {
+    track({ name: "subscribe_view", props: { source } });
+  });
 
   if (!siteConfig.features.email.enabled) return null;
 
@@ -75,6 +82,7 @@ export function EmailCaptureForm({ source, className }: Props) {
 
   return (
     <form
+      ref={viewRef}
       onSubmit={onSubmit}
       className={
         "rounded-card border border-(--color-border)/80 bg-(--color-surface) p-4 sm:p-5 " +

@@ -43,7 +43,11 @@ export function UnlockForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string; tier?: "author" | "studio" };
       if (res.ok && data.ok) {
-        track({ name: "passcheck_unlock_success", props: { tier: data.tier ?? "author" } });
+        // Manual key entry has no originating surface — attribute as "manual".
+        track({
+          name: "passcheck_unlock_success",
+          props: { tier: data.tier ?? "author", source: "manual" },
+        });
         router.push(siteConfig.features.preflight.route);
         router.refresh();
         return;

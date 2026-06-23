@@ -5,6 +5,8 @@ import { ShieldCheck, ArrowRight } from "lucide-react";
 import type { CoverInput, CoverCalcOutput } from "@kdp/calc";
 import { siteConfig } from "@/lib/site-config";
 import { PassCheckCta } from "@/components/preflight/PassCheckCta";
+import { track } from "@/lib/analytics/track";
+import { useImpression } from "@/lib/analytics/use-impression";
 
 type Props = {
   input: CoverInput;
@@ -15,8 +17,14 @@ type Props = {
 // the highest-intent moment is right after someone computes their dimensions and
 // is about to design/upload. The 2,500-template pack rides along as a bonus.
 export function TemplateUpsell({ output }: Props) {
+  // Impression denominator: how often the post-calculation upsell is actually
+  // seen, vs. the calculator-cta buy clicks it produces.
+  const viewRef = useImpression<HTMLElement>(() => {
+    track({ name: "template_upsell_view", props: { source: "calculator-cta" } });
+  });
   return (
     <aside
+      ref={viewRef}
       aria-label="Check your cover will pass KDP review"
       className="rounded-card border border-warm-300 bg-gradient-to-br from-warm-50 to-white p-5 sm:p-6"
     >

@@ -31,6 +31,16 @@ export function Header() {
                 </Link>
               </li>
             ))}
+            {/* Persistent accent CTA → the landing carries ?src=header so a buy
+                there is still attributed to the header, not "landing". */}
+            <li>
+              <Link
+                href="/cover-pass-check?src=header"
+                className="inline-flex items-center gap-1.5 rounded-md bg-(--color-on-bg) px-3.5 py-2 text-sm font-medium text-(--color-on-accent) transition-colors hover:bg-(--color-accent)"
+              >
+                Get Pass-Check
+              </Link>
+            </li>
           </ul>
         </nav>
 

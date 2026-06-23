@@ -69,6 +69,10 @@ export async function verifyLicenseWithGumroad(
   licenseKey: string,
   productId: string,
   fetchImpl: typeof fetch = fetch,
+  // The manual unlock flow increments Gumroad's uses count as a sharing signal.
+  // The automatic (Ping) path passes false: it's the buyer's own fresh purchase,
+  // so it shouldn't eat into their device budget.
+  incrementUses: boolean = true,
 ): Promise<GumroadVerifyResponse | null> {
   try {
     const res = await fetchImpl(VERIFY_ENDPOINT, {
@@ -77,7 +81,7 @@ export async function verifyLicenseWithGumroad(
       body: new URLSearchParams({
         product_id: productId,
         license_key: licenseKey,
-        increment_uses_count: "true",
+        increment_uses_count: incrementUses ? "true" : "false",
       }),
     });
     // Gumroad returns 404 with { success:false } for an unknown key — that's a

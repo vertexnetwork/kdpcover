@@ -16,6 +16,8 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
   const wasOpen = useRef(false);
 
   useEffect(() => {
+    // Close the menu on route change.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);
   }, [pathname]);
 
@@ -83,11 +85,17 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
               </button>
             </div>
             <nav aria-label="Mobile" className="flex-1 overflow-y-auto p-4">
+              <Link
+                ref={firstLinkRef}
+                href="/cover-pass-check?src=header"
+                className="mb-3 flex items-center justify-center rounded-md bg-(--color-on-bg) px-4 py-3 text-base font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
+              >
+                Get Pass-Check
+              </Link>
               <ul className="flex flex-col gap-1">
-                {links.map((link, i) => (
+                {links.map((link) => (
                   <li key={link.href}>
                     <Link
-                      ref={i === 0 ? firstLinkRef : undefined}
                       href={link.href}
                       className="block rounded-md px-3 py-3 text-base text-sage-800 hover:bg-sage-100 hover:text-warm-500"
                     >

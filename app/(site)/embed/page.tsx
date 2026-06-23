@@ -143,11 +143,12 @@ export default function EmbedLandingPage() {
           <div>
             <dt className="font-medium text-(--color-on-bg)">Does it cost anything?</dt>
             <dd className="mt-1 text-sm text-sage-800">
-              No. The embed is free with no signup or usage limit. We monetize through the optional{" "}
-              <Link href="/templates" className="underline hover:text-(--color-accent)">
-                template pack
+              No. The embed is free with no signup or usage limit. Our paid product is{" "}
+              <Link href="/cover-pass-check" className="underline hover:text-(--color-accent)">
+                Cover Pass-Check
               </Link>
-              , not the calculator.
+              , which checks finished covers against KDP&rsquo;s spec — the calculator and embed stay
+              free.
             </dd>
           </div>
           <div>

@@ -107,11 +107,37 @@ Set in **Vercel → Project → Settings → Environment Variables** (Production
 | Key | Value |
 |---|---|
 | `NEXT_PUBLIC_GUMROAD_PRODUCT_URL` | `https://thevertexnetwork.gumroad.com/l/cover-pass-check` (baked into site-config as the default — only set to override, e.g. for the `get.` custom domain) |
-| `NEXT_PUBLIC_GUMROAD_STUDIO_URL` | `https://thevertexnetwork.gumroad.com/l/cover-pass-check?option=<studio_variant_id>` |
+| `NEXT_PUBLIC_GUMROAD_STUDIO_URL` | `https://thevertexnetwork.gumroad.com/l/cover-pass-check?option=rc5OJ_BsYRuWBocc5BHNzg==` |
 | `NEXT_PUBLIC_GUMROAD_ENABLED` | `1` |
 | `NEXT_PUBLIC_GUMROAD_PRICE` | `19` |
 | `NEXT_PUBLIC_GUMROAD_STUDIO_PRICE` | `49` |
 | `NEXT_PUBLIC_PREFLIGHT_ENABLED` | `1` |
+
+---
+
+## 4b. Instant unlock — overlay checkout + auto-import
+
+The buy buttons open Gumroad's **overlay** (on-site modal checkout) and auto-unlock
+the tool the moment the sale settles — no copy/pasting a license key. How it works:
+the button mints a random `claim` nonce → it rides through the overlay URL → Gumroad
+echoes it in the **Ping** webhook → `/api/gumroad/ping` re-verifies the license and
+stashes a signed unlock token under that nonce → the browser polls
+`/api/preflight/claim`, which sets the `kc_pass` cookie. Manual key entry stays as a
+fallback (different device, ad-blocked script, etc.).
+
+**Two setup steps:**
+
+1. **Provision the correlation store.** Vercel → **Storage → Create → KV** (or any
+   Upstash Redis). Vercel injects `KV_REST_API_URL` + `KV_REST_API_TOKEN`
+   automatically; otherwise set `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`.
+   *Without this the site still works — buyers just unlock by pasting their key.*
+2. **Point Gumroad's Ping at us.** Gumroad → **Settings → Advanced → Ping** →
+   `https://kdpcover.pro/api/gumroad/ping`. (License keys must be ON, §1.)
+
+**Verify with one real/test purchase:** buy via the overlay, then watch the tool
+unlock on its own within a few seconds (the `passcheck_autounlock_success` analytics
+event fires). If it doesn't, confirm the KV vars are set and the Ping URL is saved —
+the buyer still gets in via the manual key, so this never blocks a sale.
 
 ---
 
@@ -120,8 +146,8 @@ Set in **Vercel → Project → Settings → Environment Variables** (Production
 1. `npm run build:templates` → `Compress-Archive -Path dist/templates/* -DestinationPath dist/cover-pass-check-bonus.zip`
 2. `npm run build:images` → upload `temp/gumroad-product/*` to Gumroad (cover, thumbnail, 5 previews in order).
 3. Create the Gumroad product (§1), paste the description (§2) and content/receipt (§3), enable license keys, add Author + Studio versions.
-4. Set the Vercel env vars (§4) and redeploy.
-5. **Smoke test:** buy the Author version (or use a test license), go to `/pass-check`, paste the key → tool unlocks. Drop a known-bad cover (trim-sized) → confirm it fails on size + bleed. Buy/borrow a Studio key → confirm batch mode appears.
-6. Confirm the public landing `/cover-pass-check` shows live "Get Pass-Check $19" buttons (not "Notify me").
+4. Set the Vercel env vars (§4) and redeploy. Provision KV + set the Gumroad Ping URL (§4b).
+5. **Smoke test:** buy the Author version via the overlay → confirm the tool **auto-unlocks** within a few seconds without entering a key. Drop a known-bad cover (trim-sized) → confirm it fails on size + bleed. Buy/borrow a Studio key → confirm batch mode appears. Also test the manual fallback at `/pass-check/unlock`.
+6. Confirm the public landing `/cover-pass-check` shows live "Get Pass-Check $19" buttons (not "Notify me") and that clicking opens the **overlay**, not an offsite redirect.
 
 **Before launch (flags off):** the public landing renders with "Notify me" CTAs and `/pass-check` 404s — safe to merge and let SEO compound until you flip the flags above.

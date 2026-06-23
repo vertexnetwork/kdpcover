@@ -3,6 +3,7 @@ import { Inter, Instrument_Serif } from "next/font/google";
 import { siteConfig } from "@/lib/site-config";
 import { Analytics } from "@/components/site/Analytics";
 import { Clarity } from "@/components/site/Clarity";
+import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { ConsentProvider } from "@/components/consent/ConsentProvider";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { SwRegister } from "@/components/site/SwRegister";
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Analytics />
           <Clarity />
+          <GoogleAnalytics />
           <CookieConsent />
           <SwRegister />
         </ConsentProvider>

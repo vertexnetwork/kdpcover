@@ -54,8 +54,7 @@ const STEPS = [
 ];
 
 export default function CoverPassCheckPage() {
-  const live = siteConfig.monetization.gumroad.enabled && !!siteConfig.monetization.gumroad.productUrl;
-  const ctaHref = siteConfig.features.preflight.enabled
+  const unlockHref = siteConfig.features.preflight.enabled
     ? `${siteConfig.features.preflight.route}/unlock`
     : undefined;
 
@@ -89,20 +88,19 @@ export default function CoverPassCheckPage() {
         </h1>
         <p className="mt-4 text-base text-sage-800 sm:text-lg">{pf.tagline}</p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          {ctaHref ? (
-            <Link
-              href={ctaHref}
-              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-(--color-on-bg) px-5 py-3 text-base font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
-            >
-              {live ? `Get Pass-Check — $${siteConfig.monetization.gumroad.price}` : "Get Pass-Check"}
-            </Link>
-          ) : (
-            <PassCheckCta source="landing" size="lg" />
-          )}
+          <PassCheckCta source="landing" size="lg" />
           <Link href="/" className="text-sm text-(--color-accent) hover:opacity-80">
             Try the free calculator first
           </Link>
         </div>
+        {unlockHref && (
+          <p className="mt-3 text-xs text-sage-700">
+            Already purchased?{" "}
+            <Link href={unlockHref} className="text-(--color-accent) underline hover:opacity-80">
+              Unlock with your license key →
+            </Link>
+          </p>
+        )}
         <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-sage-700">
           <Lock className="h-3 w-3" aria-hidden /> Checked in your browser — your file is never
           uploaded.
