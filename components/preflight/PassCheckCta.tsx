@@ -7,6 +7,7 @@ import { ShoppingBag, Bell, ArrowRight, Lock, Loader2, CheckCircle2 } from "luci
 import { clsx } from "clsx";
 import { siteConfig } from "@/lib/site-config";
 import { track, type PassCheckSource } from "@/lib/analytics/track";
+import { useImpression } from "@/lib/analytics/use-impression";
 
 const gumroad = siteConfig.monetization.gumroad;
 const TOOL_ROUTE = siteConfig.features.preflight.route;
@@ -24,6 +25,31 @@ const RESUME_WINDOW_MS = 30 * 60 * 1000;
 
 type Tier = "author" | "studio";
 type ClaimStatus = "idle" | "waiting" | "unlocked" | "timeout";
+
+// Valid attribution surfaces, for the ?src= passthrough below. A navigational
+// CTA (e.g. the header button) links to /cover-pass-check?src=header so the buy
+// that eventually happens on the landing is still attributed to its true origin.
+const ALLOWED_SOURCES: readonly PassCheckSource[] = [
+  "landing",
+  "unlock",
+  "calculator-cta",
+  "pseo",
+  "home",
+  "templates",
+  "header",
+  "guide",
+];
+
+function readSrcOverride(): PassCheckSource | null {
+  try {
+    const raw = new URLSearchParams(window.location.search).get("src");
+    return raw && (ALLOWED_SOURCES as readonly string[]).includes(raw)
+      ? (raw as PassCheckSource)
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 function newNonce(): string {
   try {
@@ -61,6 +87,9 @@ function useAutoUnlock() {
   const [status, setStatus] = useState<ClaimStatus>("idle");
   const [nonce, setNonce] = useState("");
   const pollNonce = useRef("");
+  // Buy source for the in-flight purchase, surfaced on the success event so a
+  // completed sale is attributable to the surface that drove it.
+  const pollSource = useRef<PassCheckSource | "unknown">("unknown");
 
   // Fresh nonce for the next purchase. Must be generated post-hydration (not in
   // a lazy initializer) or the client nonce would mismatch the SSR'd href.
@@ -73,9 +102,10 @@ function useAutoUnlock() {
     try {
       const raw = localStorage.getItem(CLAIM_STORAGE_KEY);
       if (!raw) return;
-      const saved = JSON.parse(raw) as { nonce?: string; ts?: number };
+      const saved = JSON.parse(raw) as { nonce?: string; ts?: number; source?: PassCheckSource };
       if (saved.nonce && saved.ts && Date.now() - saved.ts < RESUME_WINDOW_MS) {
         pollNonce.current = saved.nonce;
+        pollSource.current = saved.source ?? "unknown";
         // localStorage is client-only, so this resume can't run any earlier.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setStatus("waiting");
@@ -109,7 +139,10 @@ function useAutoUnlock() {
             } catch {
               /* ignore */
             }
-            track({ name: "passcheck_autounlock_success", props: { tier: data.tier ?? "author" } });
+            track({
+              name: "passcheck_autounlock_success",
+              props: { tier: data.tier ?? "author", source: pollSource.current },
+            });
             setStatus("unlocked");
             router.push(TOOL_ROUTE);
             router.refresh();
@@ -141,11 +174,12 @@ function useAutoUnlock() {
     };
   }, [status, router]);
 
-  const begin = () => {
+  const begin = (source: PassCheckSource) => {
     const n = nonce || newNonce();
     pollNonce.current = n;
+    pollSource.current = source;
     try {
-      localStorage.setItem(CLAIM_STORAGE_KEY, JSON.stringify({ nonce: n, ts: Date.now() }));
+      localStorage.setItem(CLAIM_STORAGE_KEY, JSON.stringify({ nonce: n, ts: Date.now(), source }));
     } catch {
       /* ignore */
     }
@@ -171,15 +205,30 @@ export function PassCheckCta({
   className,
 }: Props) {
   const [notified, setNotified] = useState(false);
+  const [srcOverride, setSrcOverride] = useState<PassCheckSource | null>(null);
   const { status, nonce, begin } = useAutoUnlock();
 
-  const url = buildCheckoutUrl(tier, source, nonce);
+  // If the visitor arrived from a navigational CTA (?src=…), attribute to that
+  // origin instead of this component's static prop. Client-only → set in effect.
+  useEffect(() => {
+    const override = readSrcOverride();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (override) setSrcOverride(override);
+  }, []);
+
+  const effectiveSource = srcOverride ?? source;
+  const url = buildCheckoutUrl(tier, effectiveSource, nonce);
   const price = tier === "studio" ? gumroad.studioPrice : gumroad.price;
 
+  // Impression: fire once when the CTA scrolls into view (the click denominator).
+  const viewRef = useImpression<HTMLDivElement>(() => {
+    if (url) track({ name: "passcheck_cta_view", props: { source: effectiveSource } });
+  });
+
   const onBuy = () => {
-    track({ name: "passcheck_buy_click", props: { source, price } });
-    track({ name: "passcheck_autounlock_start", props: { source } });
-    begin();
+    track({ name: "passcheck_buy_click", props: { source: effectiveSource, price } });
+    track({ name: "passcheck_autounlock_start", props: { source: effectiveSource } });
+    begin(effectiveSource);
   };
 
   // Inline status under the button while the purchase settles → auto-unlock.
@@ -252,16 +301,16 @@ export function PassCheckCta({
 
   if (variant === "button") {
     return (
-      <span className="inline-flex flex-col items-start">
+      <div ref={viewRef} className="inline-flex flex-col items-start">
         {overlayScript}
         {buyOrNotify}
         {statusNote}
-      </span>
+      </div>
     );
   }
 
   return (
-    <div className="rounded-card border border-sage-200 bg-white p-5">
+    <div ref={viewRef} className="rounded-card border border-sage-200 bg-white p-5">
       {overlayScript}
       <p className="text-xs uppercase tracking-wide text-(--color-accent)">Cover Pass-Check</p>
       <div className="mt-1 flex items-baseline gap-2">

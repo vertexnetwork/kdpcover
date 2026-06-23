@@ -17,6 +17,7 @@ import { HandoffBlock } from "./HandoffBlock";
 import { ShareButton } from "./ShareButton";
 import { TemplateUpsell } from "./TemplateUpsell";
 import { pageBucket, track } from "@/lib/analytics/track";
+import { siteConfig } from "@/lib/site-config";
 import { AlertTriangle, Code, Copy, Download, Minus, Plus, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -446,6 +447,18 @@ export function Calculator({ initial, compact, silent }: Props) {
         {!compact && <TemplateUpsell input={state} output={out} />}
         {!compact && <HandoffBlock input={state} output={out} />}
         {!compact && <EmbedSnippet open={embedOpen} onOpenChange={setEmbedOpen} />}
+        {compact && (
+          // Embedded on a third-party page: hand the visitor back to the paid
+          // product. Absolute URL + new tab since we're inside someone's iframe.
+          <a
+            href={`${siteConfig.url}${siteConfig.features.preflight.landing}?src=home&utm_source=embed&utm_medium=widget`}
+            target="_blank"
+            rel="noopener"
+            className="mt-3 block text-center text-xs text-sage-700 hover:text-warm-500"
+          >
+            Will your finished cover pass KDP review? Check it with Cover Pass-Check →
+          </a>
+        )}
       </div>
     </div>
   );

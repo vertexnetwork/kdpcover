@@ -12,7 +12,7 @@ export function ShareButton({ state }: { state: CoverInput }) {
     const code = encodeState(state);
     const url = `${window.location.origin}/share/${code}`;
     await navigator.clipboard.writeText(url);
-    track({ name: "share_link_copied", props: {} });
+    track({ name: "share_link_copied", props: { kind: "share" } });
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };

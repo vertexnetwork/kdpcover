@@ -12,6 +12,7 @@ import {
 import { MultiplierTable } from "@/components/site/MultiplierTable";
 import { ProofStrip } from "@/components/site/ProofStrip";
 import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
+import { PassCheckCta } from "@/components/preflight/PassCheckCta";
 import { siteConfig } from "@/lib/site-config";
 import { calcCover, type CoverInput } from "@kdp/calc";
 import { buildSlug } from "@kdp/slug";
@@ -147,13 +148,7 @@ export default function HomePage() {
               fonts — before KDP rejects it.
             </p>
           </div>
-          <Link
-            href="/cover-pass-check"
-            className="inline-flex items-center gap-2 rounded-md bg-(--color-on-bg) px-5 py-3 text-sm font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
-          >
-            See Cover Pass-Check
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
+          <PassCheckCta source="home" size="lg" />
         </div>
       </section>
 

@@ -38,7 +38,7 @@ export function HandoffBlock({ input, output }: Props) {
 
   const onCopy = async () => {
     await navigator.clipboard.writeText(message);
-    track({ name: "share_link_copied", props: {} });
+    track({ name: "share_link_copied", props: { kind: "handoff" } });
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };

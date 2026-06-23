@@ -3,6 +3,7 @@ import { siteFacts } from "@/lib/content/site-facts";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { siteConfig } from "@/lib/site-config";
 import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
+import { PassCheckCta } from "@/components/preflight/PassCheckCta";
 
 export const metadata = {
   title: "KDP cover review: a no-rejection checklist",
@@ -106,6 +107,18 @@ export default function GuidePage() {
           </li>
         ))}
       </ol>
+
+      <div className="mt-12 rounded-card border border-warm-300 bg-gradient-to-br from-warm-50 to-(--color-surface) p-5 sm:p-6">
+        <h2 className="text-xl">Don&rsquo;t want to eyeball all seven?</h2>
+        <p className="mt-1.5 max-w-2xl text-sm text-sage-800">
+          Cover Pass-Check runs this whole checklist against your finished file in seconds — full-cover
+          size, bleed, safe zones, DPI, color space, and embedded fonts — and tells you exactly what to
+          fix before KDP sees it.
+        </p>
+        <div className="mt-4">
+          <PassCheckCta source="guide" size="lg" />
+        </div>
+      </div>
 
       <h2 className="mt-12 text-2xl">FAQ</h2>
       <dl className="mt-4 space-y-5">
