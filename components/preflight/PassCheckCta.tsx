@@ -11,13 +11,15 @@ const gumroad = siteConfig.monetization.gumroad;
 type Tier = "author" | "studio";
 
 /** Resolve the buyer-facing checkout URL, or null when the store isn't live yet
- *  (env not configured) so the CTA shows the pre-launch "Notify me" state. */
+ *  (env not configured) so the CTA shows the pre-launch "Notify me" state.
+ *  We deliberately do NOT add Gumroad's ?wanted=true — buyers land on the
+ *  product page (listing copy, previews, version picker) rather than jumping
+ *  straight to the payment overlay. */
 function checkoutUrl(source: PassCheckSource, tier: Tier): string | null {
   if (!gumroad.enabled || !gumroad.productUrl) return null;
   const base = tier === "studio" && gumroad.studioUrl ? gumroad.studioUrl : gumroad.productUrl;
   try {
     const url = new URL(base);
-    url.searchParams.set("wanted", "true");
     url.searchParams.set("utm_source", "kdpcover");
     url.searchParams.set("utm_medium", "site");
     url.searchParams.set("utm_content", source);
