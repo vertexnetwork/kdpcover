@@ -34,6 +34,9 @@ export type AnalyticsEvent =
   | { name: "passcheck_notify_click"; props: { source: PassCheckSource } }
   | { name: "passcheck_unlock_attempt"; props: Record<string, never> }
   | { name: "passcheck_unlock_success"; props: { tier: PassCheckTier } }
+  | { name: "passcheck_autounlock_start"; props: { source: PassCheckSource } }
+  | { name: "passcheck_autounlock_success"; props: { tier: PassCheckTier } }
+  | { name: "passcheck_autounlock_timeout"; props: Record<string, never> }
   | { name: "passcheck_run"; props: { kind: string; overall: string; tier: PassCheckTier } }
   | { name: "vertex_footer_opened"; props: Record<string, never> }
   | { name: "subscribe_submit"; props: { source: EmailSource } }
