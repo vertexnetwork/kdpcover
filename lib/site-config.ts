@@ -138,12 +138,18 @@ export const siteConfig = {
   monetization: {
     // Cover Pass-Check, sold through Gumroad (Merchant of Record — handles
     // global sales tax / EU VAT) as one product with two versions: Author and
-    // Studio. Set the full product permalink in NEXT_PUBLIC_GUMROAD_PRODUCT_URL
-    // and flip NEXT_PUBLIC_GUMROAD_ENABLED=1 to go live; blank/0 keeps the CTAs
-    // in "notify me" state so SEO can compound before launch.
+    // Studio. The live product permalink is baked in as the default so CTAs
+    // never link to a dead/blank URL; NEXT_PUBLIC_GUMROAD_PRODUCT_URL overrides
+    // it (e.g. once the get.kdpcover.pro custom domain is live). Going live is
+    // gated solely on NEXT_PUBLIC_GUMROAD_ENABLED=1 — 0 keeps every CTA in
+    // "notify me" state so SEO can compound before launch.
     gumroad: {
-      productUrl: process.env.NEXT_PUBLIC_GUMROAD_PRODUCT_URL ?? "",
+      productUrl:
+        process.env.NEXT_PUBLIC_GUMROAD_PRODUCT_URL ??
+        "https://thevertexnetwork.gumroad.com/l/cover-pass-check",
       // Direct link to the Studio version, for the "Upgrade to Studio" card.
+      // Empty falls back to productUrl (lands on Author); set the ?option=<id>
+      // deep link once known to pre-select Studio at checkout.
       studioUrl: process.env.NEXT_PUBLIC_GUMROAD_STUDIO_URL ?? "",
       enabled: (process.env.NEXT_PUBLIC_GUMROAD_ENABLED ?? "0") === "1",
       price: Number(process.env.NEXT_PUBLIC_GUMROAD_PRICE ?? "19"),
