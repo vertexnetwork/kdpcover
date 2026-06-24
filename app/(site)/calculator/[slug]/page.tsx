@@ -6,6 +6,7 @@ import { buildSlug, curatedPseoSlugs, parseSlug } from "@kdp/slug";
 import { FORMAT_LABEL, isPageCountValid } from "@kdp/limits";
 import { Calculator } from "@/components/calculator/Calculator";
 import { PassCheckCta } from "@/components/preflight/PassCheckCta";
+import { RecommendedTools } from "@/components/site/RecommendedTools";
 import { breadcrumbJsonLd, howToJsonLd } from "@/lib/seo/jsonld";
 import { siteConfig } from "@/lib/site-config";
 
@@ -147,6 +148,10 @@ export default async function PseoPage({ params }: Params) {
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className="mt-12">
+        <RecommendedTools source="pseo" />
       </section>
 
       <script
