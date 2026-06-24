@@ -25,6 +25,9 @@ function parseStudioVariants(raw: string | undefined): string[] {
 export const serverConfig = {
   gumroadProductId: process.env.GUMROAD_PRODUCT_ID ?? "",
   preflightTokenSecret: process.env.PREFLIGHT_TOKEN_SECRET ?? "",
+  // Seller access token — read-only use: fetch the founder coupon's live
+  // remaining-uses count. Never exposed to the client.
+  gumroadAccessToken: process.env.GUMROAD_ACCESS_TOKEN ?? "",
   // 5 covers a buyer's own laptop + phone plus the occasional re-unlock after a
   // cleared cookie, without leaving room to seed a sharing group. Tunable.
   preflightUsesCap: Number(process.env.PREFLIGHT_USES_CAP ?? "5"),

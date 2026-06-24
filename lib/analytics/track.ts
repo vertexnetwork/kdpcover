@@ -14,7 +14,8 @@ export type PassCheckSource =
   | "home"
   | "templates"
   | "header"
-  | "guide";
+  | "guide"
+  | "banner";
 
 type PassCheckTier = "author" | "studio";
 
