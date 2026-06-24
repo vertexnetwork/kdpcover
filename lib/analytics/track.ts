@@ -26,6 +26,9 @@ type AttributionSource = PassCheckSource | "manual" | "unknown";
 
 type EmailSource = "about" | "guide" | "calculator" | "extension" | "templates" | "footer";
 
+/** Where the affiliate "tools authors use" strip was shown. */
+export type AffiliateSource = "pseo" | "home" | "guide";
+
 export type AnalyticsEvent =
   | { name: "calculate"; props: { format: Format; paper: Paper; pageBucket: string } }
   | { name: "format_changed"; props: { format: Format } }
@@ -49,7 +52,9 @@ export type AnalyticsEvent =
   | { name: "vertex_footer_opened"; props: Record<string, never> }
   | { name: "subscribe_view"; props: { source: EmailSource } }
   | { name: "subscribe_submit"; props: { source: EmailSource } }
-  | { name: "subscribe_success"; props: { source: EmailSource } };
+  | { name: "subscribe_success"; props: { source: EmailSource } }
+  | { name: "affiliate_view"; props: { source: AffiliateSource } }
+  | { name: "affiliate_click"; props: { partner: string; source: AffiliateSource } };
 
 declare global {
   interface Window {

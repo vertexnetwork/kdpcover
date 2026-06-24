@@ -13,6 +13,7 @@ import { MultiplierTable } from "@/components/site/MultiplierTable";
 import { ProofStrip } from "@/components/site/ProofStrip";
 import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
 import { PassCheckCta } from "@/components/preflight/PassCheckCta";
+import { RecommendedTools } from "@/components/site/RecommendedTools";
 import { siteConfig } from "@/lib/site-config";
 import { calcCover, type CoverInput } from "@kdp/calc";
 import { buildSlug } from "@kdp/slug";
@@ -252,6 +253,8 @@ export default function HomePage() {
           </Link>
           .
         </p>
+
+        <RecommendedTools source="home" className="mt-12" />
 
         <EmailCaptureForm source="calculator" className="mt-12" />
       </section>

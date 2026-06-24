@@ -125,11 +125,17 @@ export const siteConfig = {
         | "mediavine"
         | "carbon",
     },
+    // Affiliate is a multi-partner registry (lib/content/recommendations.ts),
+    // not a single slot: every partner is a PartnerStack program so the whole
+    // book monetizes from one dashboard. This flag is the master switch; each
+    // partner's referral URL is its own env var and a partner with no URL set is
+    // simply omitted. Surfaces render as SECONDARY placements only — the $19
+    // Cover Pass-Check stays the primary CTA on every high-intent page.
     affiliate: {
       enabled: (process.env.NEXT_PUBLIC_AFFILIATE_ENABLED ?? "0") === "1",
-      url: process.env.NEXT_PUBLIC_AFFILIATE_URL ?? "",
-      label: process.env.NEXT_PUBLIC_AFFILIATE_LABEL ?? "",
-      provider: process.env.NEXT_PUBLIC_AFFILIATE_PROVIDER ?? "",
+      // FTC disclosure, shown on every affiliate surface.
+      disclosure:
+        "Some links here are affiliate links: if you sign up we may earn a commission at no extra cost to you. We only list tools we'd recommend regardless.",
     },
     consent: { required: true },
     themeToggle: false,
