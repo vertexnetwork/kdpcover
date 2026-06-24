@@ -11,7 +11,6 @@ import {
 } from "@/lib/seo/jsonld";
 import { MultiplierTable } from "@/components/site/MultiplierTable";
 import { ProofStrip } from "@/components/site/ProofStrip";
-import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
 import { PassCheckCta } from "@/components/preflight/PassCheckCta";
 import { RecommendedTools } from "@/components/site/RecommendedTools";
 import { siteConfig } from "@/lib/site-config";
@@ -255,8 +254,6 @@ export default function HomePage() {
         </p>
 
         <RecommendedTools source="home" className="mt-12" />
-
-        <EmailCaptureForm source="calculator" className="mt-12" />
       </section>
 
       <script
