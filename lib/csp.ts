@@ -14,6 +14,13 @@ export type CspProviders = {
   carbon?: boolean;
   plausible?: boolean;
   ga?: boolean;
+  gumroad?: boolean;
+  /**
+   * Origin of NEXT_PUBLIC_GUMROAD_PRODUCT_URL. The overlay checkout opens the
+   * product URL in an iframe at its own origin (e.g. thevertexnetwork.gumroad
+   * .com, or a custom domain later), which needs its own frame-src entry.
+   */
+  gumroadOrigin?: string;
 };
 
 export function buildCSP(providers: CspProviders = {}): string {
@@ -56,8 +63,25 @@ export function buildCSP(providers: CspProviders = {}): string {
   }
   if (providers.ga) {
     scriptSrc.push("https://www.googletagmanager.com", "https://www.google-analytics.com");
-    connectSrc.push("https://www.google-analytics.com");
+    connectSrc.push("https://www.google-analytics.com", "https://*.analytics.google.com");
     imgSrc.push("https://www.google-analytics.com");
+  }
+  if (providers.gumroad) {
+    // gumroad.js is just a loader: it injects the real overlay bundle + CSS from
+    // assets.gumroad.com, so BOTH hosts must be allowed or the overlay silently
+    // fails to initialize and the button falls back to a full-page checkout
+    // redirect. The checkout itself runs in an iframe at the product URL origin.
+    // frame-src, once set, stops inheriting default-src, so keep 'self' (already
+    // present) for the /embed same-origin preview.
+    scriptSrc.push("https://gumroad.com", "https://assets.gumroad.com");
+    styleSrc.push("https://assets.gumroad.com");
+    imgSrc.push("https://gumroad.com", "https://assets.gumroad.com", "https://*.gumroad.com");
+    connectSrc.push("https://gumroad.com", "https://assets.gumroad.com", "https://*.gumroad.com");
+    frameSrc.push("https://gumroad.com", "https://*.gumroad.com");
+    if (providers.gumroadOrigin) {
+      frameSrc.push(providers.gumroadOrigin);
+      connectSrc.push(providers.gumroadOrigin);
+    }
   }
 
   return [

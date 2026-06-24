@@ -7,6 +7,14 @@ const withMDX = createMDX({
   extension: /\.mdx?$/,
 });
 
+const gumroadOrigin = (() => {
+  try {
+    return new URL(siteConfig.monetization.gumroad.productUrl).origin;
+  } catch {
+    return undefined;
+  }
+})();
+
 const siteCsp = buildCSP({
   vercelAnalytics: true,
   clarity: !!process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID,
@@ -14,7 +22,12 @@ const siteCsp = buildCSP({
   mediavine: siteConfig.features.ads.provider === "mediavine",
   carbon: siteConfig.features.ads.provider === "carbon",
   plausible: !!process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN,
-  ga: !!process.env.NEXT_PUBLIC_GA_ID,
+  ga: !!process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+  // Allow the on-site Gumroad overlay (script bundle + checkout iframe) whenever
+  // the store is live. Without this the modal silently falls back to a full-page
+  // checkout redirect.
+  gumroad: siteConfig.monetization.gumroad.enabled,
+  gumroadOrigin,
 });
 
 const nextConfig: NextConfig = {

@@ -61,10 +61,9 @@ function newNonce(): string {
   }
 }
 
-/** Build the Gumroad checkout URL. ?wanted=true makes the overlay jump straight
- *  to the payment form; ?claim=<nonce> rides through to the Ping webhook so we
- *  can auto-unlock *this* browser once the sale settles. Null when the store
- *  isn't live yet (pre-launch "Notify me" state). */
+/** Build the Gumroad checkout URL for the on-site overlay. ?claim=<nonce> rides
+ *  through to the Ping webhook so we can auto-unlock *this* browser once the sale
+ *  settles; ?offer_code applies the founder coupon. Null pre-launch. */
 function buildCheckoutUrl(
   tier: Tier,
   source: PassCheckSource,
@@ -75,11 +74,13 @@ function buildCheckoutUrl(
   const base = tier === "studio" && gumroad.studioUrl ? gumroad.studioUrl : gumroad.productUrl;
   try {
     const url = new URL(base);
-    // Gumroad's path-form coupon (…/l/cover-pass-check/FOUNDER) applies the
-    // discount even alongside ?wanted=true, which the ?offer_code= query form
-    // does not reliably do.
-    if (coupon) url.pathname = `${url.pathname.replace(/\/$/, "")}/${coupon}`;
-    url.searchParams.set("wanted", "true");
+    // Do NOT set wanted=true: gumroad.js refuses to bind its on-site overlay to
+    // any href that already has it and lets the click navigate full-page to
+    // checkout instead. Omitting it lets the script open the modal (it appends
+    // overlay=true itself). The coupon rides as ?offer_code= — the query form the
+    // overlay honors. No-JS fallback: the anchor's target=_blank lands on the
+    // product page.
+    if (coupon) url.searchParams.set("offer_code", coupon);
     if (nonce) url.searchParams.set("claim", nonce);
     url.searchParams.set("utm_source", "kdpcover");
     url.searchParams.set("utm_medium", "site");
@@ -325,7 +326,9 @@ export function PassCheckCta({
   );
 
   // Load the overlay script once the store is live (next/script dedupes by src).
-  const overlayScript = url ? <Script src={GUMROAD_JS} strategy="afterInteractive" /> : null;
+  const overlayScript = url ? (
+    <Script id="gumroad-overlay-js" src={GUMROAD_JS} strategy="afterInteractive" />
+  ) : null;
 
   if (variant === "button") {
     return (
