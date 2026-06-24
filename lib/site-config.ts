@@ -154,6 +154,17 @@ export const siteConfig = {
       enabled: (process.env.NEXT_PUBLIC_GUMROAD_ENABLED ?? "0") === "1",
       price: Number(process.env.NEXT_PUBLIC_GUMROAD_PRICE ?? "19"),
       studioPrice: Number(process.env.NEXT_PUBLIC_GUMROAD_STUDIO_PRICE ?? "49"),
+      // Cold-start "founder" discount: a capped Gumroad coupon (Author tier only)
+      // shown with the live remaining count pulled from the Gumroad API. Honest
+      // scarcity — a real cap, the true number left. Auto-hides at 0 since the UI
+      // is driven by the live count. percentOff is the marketing display (rule of
+      // 100: 37% reads bigger than $7 on a $19 product); price is the net.
+      founder: {
+        enabled: (process.env.NEXT_PUBLIC_FOUNDER_ENABLED ?? "0") === "1",
+        code: process.env.NEXT_PUBLIC_FOUNDER_CODE ?? "FOUNDER",
+        price: Number(process.env.NEXT_PUBLIC_FOUNDER_PRICE ?? "12"),
+        percentOff: Number(process.env.NEXT_PUBLIC_FOUNDER_PERCENT ?? "37"),
+      },
     },
   },
 

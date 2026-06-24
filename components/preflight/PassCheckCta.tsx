@@ -8,6 +8,7 @@ import { clsx } from "clsx";
 import { siteConfig } from "@/lib/site-config";
 import { track, type PassCheckSource } from "@/lib/analytics/track";
 import { useImpression } from "@/lib/analytics/use-impression";
+import { useFounder } from "./use-founder";
 
 const gumroad = siteConfig.monetization.gumroad;
 const TOOL_ROUTE = siteConfig.features.preflight.route;
@@ -38,6 +39,7 @@ const ALLOWED_SOURCES: readonly PassCheckSource[] = [
   "templates",
   "header",
   "guide",
+  "banner",
 ];
 
 function readSrcOverride(): PassCheckSource | null {
@@ -63,11 +65,20 @@ function newNonce(): string {
  *  to the payment form; ?claim=<nonce> rides through to the Ping webhook so we
  *  can auto-unlock *this* browser once the sale settles. Null when the store
  *  isn't live yet (pre-launch "Notify me" state). */
-function buildCheckoutUrl(tier: Tier, source: PassCheckSource, nonce: string): string | null {
+function buildCheckoutUrl(
+  tier: Tier,
+  source: PassCheckSource,
+  nonce: string,
+  coupon?: string,
+): string | null {
   if (!gumroad.enabled || !gumroad.productUrl) return null;
   const base = tier === "studio" && gumroad.studioUrl ? gumroad.studioUrl : gumroad.productUrl;
   try {
     const url = new URL(base);
+    // Gumroad's path-form coupon (…/l/cover-pass-check/FOUNDER) applies the
+    // discount even alongside ?wanted=true, which the ?offer_code= query form
+    // does not reliably do.
+    if (coupon) url.pathname = `${url.pathname.replace(/\/$/, "")}/${coupon}`;
     url.searchParams.set("wanted", "true");
     if (nonce) url.searchParams.set("claim", nonce);
     url.searchParams.set("utm_source", "kdpcover");
@@ -216,9 +227,16 @@ export function PassCheckCta({
     if (override) setSrcOverride(override);
   }, []);
 
+  // Founder cold-start offer — Author tier only (the coupon is restricted to it
+  // in Gumroad). When active, swap in the discounted price + path-form coupon.
+  const founder = useFounder();
+  const founderActive = !!founder?.active && tier === "author";
+  const listPrice = tier === "studio" ? gumroad.studioPrice : gumroad.price;
+  const price = founderActive ? founder!.price : listPrice;
+  const coupon = founderActive ? founder!.code : undefined;
+
   const effectiveSource = srcOverride ?? source;
-  const url = buildCheckoutUrl(tier, effectiveSource, nonce);
-  const price = tier === "studio" ? gumroad.studioPrice : gumroad.price;
+  const url = buildCheckoutUrl(tier, effectiveSource, nonce, coupon);
 
   // Impression: fire once when the CTA scrolls into view (the click denominator).
   const viewRef = useImpression<HTMLDivElement>(() => {
@@ -251,6 +269,16 @@ export function PassCheckCta({
         </a>
       </p>
     ) : null;
+
+  // Founder offer line for the inline (button) variant: strikethrough list price,
+  // the marketing % (rule of 100), and the true remaining count.
+  const founderNote = founderActive ? (
+    <p className="mt-2 text-xs text-warm-700">
+      <span className="text-sage-600 line-through">${listPrice}</span>{" "}
+      <strong className="text-(--color-on-bg)">${price}</strong> · {founder!.percentOff}% founder
+      discount{founder!.remaining != null ? ` · only ${founder!.remaining} left` : ""}
+    </p>
+  ) : null;
 
   const buyOrNotify = url ? (
     <a
@@ -304,6 +332,7 @@ export function PassCheckCta({
       <div ref={viewRef} className="inline-flex flex-col items-start">
         {overlayScript}
         {buyOrNotify}
+        {founderNote}
         {statusNote}
       </div>
     );
@@ -312,11 +341,22 @@ export function PassCheckCta({
   return (
     <div ref={viewRef} className="rounded-card border border-sage-200 bg-white p-5">
       {overlayScript}
-      <p className="text-xs uppercase tracking-wide text-(--color-accent)">Cover Pass-Check</p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs uppercase tracking-wide text-(--color-accent)">Cover Pass-Check</p>
+        {founderActive && founder!.remaining != null && (
+          <span className="rounded-full bg-warm-100 px-2 py-0.5 text-xs font-medium text-warm-700">
+            Founder · only {founder!.remaining} left
+          </span>
+        )}
+      </div>
       <div className="mt-1 flex items-baseline gap-2">
+        {founderActive && (
+          <span className="font-display text-xl text-sage-600 line-through">${listPrice}</span>
+        )}
         <span className="font-display text-3xl">${price}</span>
         <span className="text-sm text-sage-700">
           one-time · {tier === "studio" ? "Studio (batch)" : "Author"}
+          {founderActive ? ` · ${founder!.percentOff}% off` : ""}
         </span>
       </div>
       <p className="mt-2 text-sm text-sage-800">
