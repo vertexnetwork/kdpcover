@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -46,7 +47,7 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-sage-800 hover:bg-sage-100 md:hidden"
+        className="text-sage-800 hover:bg-sage-100 inline-flex h-11 w-11 items-center justify-center rounded-md md:hidden"
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label="Open menu"
@@ -55,59 +56,61 @@ export function MobileMenu({ links }: { links: readonly NavLink[] }) {
         <Menu className="h-5 w-5" aria-hidden />
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 md:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site navigation"
-          ref={dialogRef}
-        >
-          <button
-            type="button"
-            className="absolute inset-0 bg-ink/50"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
+      {open &&
+        createPortal(
           <div
-            id="mobile-menu"
-            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-[var(--color-ivory)] shadow-xl"
+            className="fixed inset-0 z-50 md:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            ref={dialogRef}
           >
-            <div className="flex h-16 items-center justify-between border-b border-sage-200/60 px-4">
-              <span className="font-display text-lg">Menu</span>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-sage-100"
-              >
-                <X className="h-5 w-5" aria-hidden />
-              </button>
+            <button
+              type="button"
+              className="bg-ink/50 absolute inset-0"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+            />
+            <div
+              id="mobile-menu"
+              className="absolute top-0 right-0 flex h-full w-full max-w-sm flex-col bg-[var(--color-ivory)] shadow-xl"
+            >
+              <div className="border-sage-200/60 flex h-16 items-center justify-between border-b px-4">
+                <span className="font-display text-lg">Menu</span>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                  className="hover:bg-sage-100 inline-flex h-11 w-11 items-center justify-center rounded-md"
+                >
+                  <X className="h-5 w-5" aria-hidden />
+                </button>
+              </div>
+              <nav aria-label="Mobile" className="flex-1 overflow-y-auto p-4">
+                <Link
+                  ref={firstLinkRef}
+                  href="/cover-pass-check?src=header"
+                  className="mb-3 flex items-center justify-center rounded-md bg-(--color-on-bg) px-4 py-3 text-base font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
+                >
+                  Get Pass-Check
+                </Link>
+                <ul className="flex flex-col gap-1">
+                  {links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sage-800 hover:bg-sage-100 hover:text-warm-500 block rounded-md px-3 py-3 text-base"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
-            <nav aria-label="Mobile" className="flex-1 overflow-y-auto p-4">
-              <Link
-                ref={firstLinkRef}
-                href="/cover-pass-check?src=header"
-                className="mb-3 flex items-center justify-center rounded-md bg-(--color-on-bg) px-4 py-3 text-base font-medium text-(--color-on-accent) hover:bg-(--color-accent)"
-              >
-                Get Pass-Check
-              </Link>
-              <ul className="flex flex-col gap-1">
-                {links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="block rounded-md px-3 py-3 text-base text-sage-800 hover:bg-sage-100 hover:text-warm-500"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

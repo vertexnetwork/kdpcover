@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { siteFacts } from "@/lib/content/site-facts";
 import { siteConfig } from "@/lib/site-config";
-import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
 
 export const metadata = {
   title: "Methodology & Sources",
@@ -13,7 +12,7 @@ export default function AboutPage() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="text-3xl sm:text-4xl">About {siteConfig.name}</h1>
-      <p className="mt-3 text-sage-800">
+      <p className="text-sage-800 mt-3">
         {siteConfig.name} is an independent precision tool for Amazon KDP paperback and
         case-laminate hardcover covers. It computes exact spine width, full-cover dimensions, bleed,
         and safe zones from your trim size, paper type, and page count — verified against
@@ -25,7 +24,7 @@ export default function AboutPage() {
       </p>
 
       <h2 className="mt-8 text-2xl">Methodology</h2>
-      <p className="mt-2 text-sage-800">
+      <p className="text-sage-800 mt-2">
         Every multiplier and formula was last reconciled against Amazon KDP&rsquo;s official
         cover-template generator on{" "}
         <time dateTime={siteFacts.verifiedDate}>
@@ -37,7 +36,7 @@ export default function AboutPage() {
           })}
         </time>
         . All math runs in your browser; nothing is uploaded. The full set of formulas lives in{" "}
-        <code className="rounded bg-sage-100 px-1 py-0.5 text-xs">lib/kdp/calc.ts</code> with full
+        <code className="bg-sage-100 rounded px-1 py-0.5 text-xs">lib/kdp/calc.ts</code> with full
         unit-test coverage.
       </p>
 
@@ -57,7 +56,7 @@ export default function AboutPage() {
         ))}
       </ul>
 
-      <p className="mt-8 text-sage-800">
+      <p className="text-sage-800 mt-8">
         Common questions about spine width, bleed, trim sizes, and KDP rejections are answered on
         the{" "}
         <Link href="/" className="underline hover:text-(--color-accent)">
@@ -67,7 +66,7 @@ export default function AboutPage() {
       </p>
 
       <h2 className="mt-8 text-2xl">Contact</h2>
-      <p className="mt-2 text-sage-800">
+      <p className="text-sage-800 mt-2">
         Bugs, feature requests, or accuracy reports:{" "}
         <a
           href={`mailto:${siteConfig.supportEmail}`}
@@ -77,8 +76,6 @@ export default function AboutPage() {
         </a>
         .
       </p>
-
-      <EmailCaptureForm source="about" className="mt-10" />
     </article>
   );
 }

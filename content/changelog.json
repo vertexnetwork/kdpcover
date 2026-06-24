@@ -1,1 +1,106 @@
-[]
+[
+  {
+    "date": "2026-06-24",
+    "title": "Fix header/footer duplication"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Fix Gumroad links: bake live product URL as default, drop dead domain"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Pass-Check CTA: land on Gumroad product page, not straight to checkout"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Seamless checkout: Gumroad overlay + auto-unlock after purchase"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Conversion overhaul: surface CTAs everywhere + full funnel attribution + GA4"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Founder cold-start offer: capped coupon with live remaining count"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Fix Gumroad overlay: allow it in CSP, drop wanted=true, GA CSP gate"
+  },
+  {
+    "date": "2026-06-23",
+    "title": "Add PartnerStack affiliate strip: Kit, Printify, Gelato, Teachable"
+  },
+  {
+    "date": "2026-06-19",
+    "title": "Pivot paid product to Cover Pass-Check (Gumroad-gated preflight tool)"
+  },
+  {
+    "date": "2026-06-19",
+    "title": "SEO: fix pSEO click-through — task-intent titles, de-dupe /about, consolidate au"
+  },
+  {
+    "date": "2026-06-19",
+    "title": "Add Gumroad launch kit: product imagery generator + listing/receipt/launch copy"
+  },
+  {
+    "date": "2026-06-06",
+    "title": "Visibility audit remediation: discovery files, agent API, schema polish"
+  },
+  {
+    "date": "2026-05-16",
+    "title": "Product: rebuild template pack — Gumroad, coherent catalog, real guide layers"
+  },
+  {
+    "date": "2026-05-16",
+    "title": "Store polish: 7-day refunds, kill /recommended, real /embed landing"
+  },
+  {
+    "date": "2026-05-15",
+    "title": "SEO: re-point intent to calculator hub, fix /sitemap.xml 404, GEO"
+  },
+  {
+    "date": "2026-05-15",
+    "title": "Add prebuild-generated favicon/icon assets and humans.txt date"
+  },
+  {
+    "date": "2026-05-12",
+    "title": "Adopt Vertex spoke spec — siteConfig keystone, hub-synced public/, P2 email capt"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Initial build — calculator engine, pSEO, embed, continuous-update infra"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "UX forensic pass — fix friction in calculator + supporting surfaces"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Conversion-aesthetic pass — pSEO, trust, ergonomics, hand-off"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Template store funnel + clean homepage URL"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Kill all social copy"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Brand icon — book-cover mark in sage + warm spine"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Rip out display ads — store is the revenue lever"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Add tokenmath.dev to /network"
+  },
+  {
+    "date": "2026-05-09",
+    "title": "Hide self-link on /network"
+  }
+]

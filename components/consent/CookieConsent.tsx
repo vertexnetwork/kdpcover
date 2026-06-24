@@ -19,15 +19,17 @@ export function CookieConsent() {
   if (framed) return null;
   if (state !== "unknown") return null;
   return (
+    // Pinned bottom-left on desktop (and narrowed) so it never sits over the
+    // calculator's live cover preview or the footer email form on the right.
     <div
       role="dialog"
       aria-live="polite"
       aria-label="Cookie preferences"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded-card border border-(--color-border)/80 bg-(--color-surface) p-4 shadow-(--shadow-card) sm:inset-x-auto sm:right-4 sm:bottom-4"
+      className="rounded-card fixed inset-x-3 bottom-3 z-50 mx-auto max-w-sm border border-(--color-border)/80 bg-(--color-surface) p-4 shadow-(--shadow-card) sm:inset-x-auto sm:bottom-4 sm:left-4 sm:mx-0"
     >
       <p className="text-sm text-(--color-on-bg)">
-        We use anonymous analytics (Vercel) and, with your consent, Microsoft Clarity for
-        usability heatmaps. No advertising cookies.{" "}
+        We use anonymous analytics (Vercel) and, with your consent, Microsoft Clarity for usability
+        heatmaps. No advertising cookies.{" "}
         <Link href="/privacy" className="underline hover:text-(--color-accent)">
           Privacy policy
         </Link>
@@ -44,7 +46,7 @@ export function CookieConsent() {
         <button
           type="button"
           onClick={deny}
-          className="inline-flex min-h-(--spacing-touch) items-center rounded-md border border-(--color-border) bg-transparent px-4 py-2 text-sm font-medium text-(--color-on-bg) hover:bg-sage-100"
+          className="hover:bg-sage-100 inline-flex min-h-(--spacing-touch) items-center rounded-md border border-(--color-border) bg-transparent px-4 py-2 text-sm font-medium text-(--color-on-bg)"
         >
           Decline
         </button>
