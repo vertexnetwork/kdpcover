@@ -4,6 +4,10 @@ import { MobileMenu } from "./MobileMenu";
 
 export function Header() {
   const nav = siteConfig.nav.primary;
+  // The persistent "Get Pass-Check" CTA below already links to the landing, so
+  // drop the duplicate plain "Pass-Check" nav link from both menus.
+  const landing = siteConfig.features.preflight.landing;
+  const navLinks = nav.filter((link) => link.href !== landing);
   return (
     <header className="sticky top-0 z-40 border-b border-(--color-border)/60 bg-(--color-bg)/85 backdrop-blur supports-[backdrop-filter]:bg-(--color-bg)/70">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -21,7 +25,7 @@ export function Header() {
 
         <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-6 text-sm">
-            {nav.slice(1).map((link) => (
+            {navLinks.slice(1).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -44,7 +48,7 @@ export function Header() {
           </ul>
         </nav>
 
-        <MobileMenu links={nav} />
+        <MobileMenu links={navLinks} />
       </div>
     </header>
   );

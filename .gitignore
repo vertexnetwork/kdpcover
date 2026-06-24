@@ -14,6 +14,7 @@ node_modules
 /playwright-report
 /blob-report
 /playwright/.cache
+/.playwright-screenshots
 
 # next.js
 /.next/

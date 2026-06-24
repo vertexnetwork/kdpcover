@@ -75,6 +75,9 @@ export function buildCSP(providers: CspProviders = {}): string {
     // present) for the /embed same-origin preview.
     scriptSrc.push("https://gumroad.com", "https://assets.gumroad.com");
     styleSrc.push("https://assets.gumroad.com");
+    // The overlay bundle pulls its branded webfonts from assets.gumroad.com;
+    // without this the checkout modal silently falls back to a system font.
+    fontSrc.push("https://assets.gumroad.com");
     imgSrc.push("https://gumroad.com", "https://assets.gumroad.com", "https://*.gumroad.com");
     connectSrc.push("https://gumroad.com", "https://assets.gumroad.com", "https://*.gumroad.com");
     frameSrc.push("https://gumroad.com", "https://*.gumroad.com");
