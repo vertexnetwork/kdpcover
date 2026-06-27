@@ -15,7 +15,8 @@ export type PassCheckSource =
   | "templates"
   | "header"
   | "guide"
-  | "banner";
+  | "banner"
+  | "calculator-index";
 
 type PassCheckTier = "author" | "studio";
 
@@ -27,7 +28,7 @@ type AttributionSource = PassCheckSource | "manual" | "unknown";
 type EmailSource = "about" | "guide" | "calculator" | "extension" | "templates" | "footer";
 
 /** Where the affiliate "tools authors use" strip was shown. */
-export type AffiliateSource = "pseo" | "home" | "guide";
+export type AffiliateSource = "pseo" | "home" | "guide" | "calculator-index";
 
 export type AnalyticsEvent =
   | { name: "calculate"; props: { format: Format; paper: Paper; pageBucket: string } }
