@@ -234,6 +234,15 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
+        <p className="mt-3 text-sm">
+          <Link
+            href="/calculator"
+            className="inline-flex items-center gap-1.5 text-(--color-accent) hover:underline"
+          >
+            Browse every trim, paper &amp; page count
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Link>
+        </p>
 
         <h2 className="mb-4 mt-12 text-2xl">Frequently asked</h2>
         <dl id="faq" className="space-y-6">

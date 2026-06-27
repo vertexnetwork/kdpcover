@@ -87,7 +87,7 @@ export function pSeoPageBuckets(format: Format): number[] {
   return Array.from(new Set(buckets)).sort((a, b) => a - b);
 }
 
-/** Returns ~3,200 curated pSEO slugs for generateStaticParams. */
+/** Returns the 2,060 curated pSEO slugs (1,300 paperback + 760 hardcover) for generateStaticParams. */
 export function curatedPseoSlugs(): string[] {
   const slugs: string[] = [];
   const trims = {
@@ -119,4 +119,22 @@ export function curatedPseoSlugs(): string[] {
     }
   }
   return Array.from(new Set(slugs));
+}
+
+let curatedSlugSet: Set<string> | null = null;
+
+/**
+ * Is `slug` one of the curated, sitemap-listed pSEO pages?
+ *
+ * `dynamicParams = true` lets the calculator route render ANY valid slug (every
+ * page count in range, any trim the regex accepts) so the live tool always
+ * works. But those non-curated variants — including the ±1-page neighbours the
+ * spoke pages link to — are near-duplicates of curated pages and are NOT in the
+ * sitemap. We render them for users but mark them `noindex` so the crawlable
+ * index stays the intentional 2,060-page set instead of an unbounded near-dup
+ * long tail. Lazily memoised; the set is deterministic per build.
+ */
+export function isCuratedSlug(slug: string): boolean {
+  if (!curatedSlugSet) curatedSlugSet = new Set(curatedPseoSlugs());
+  return curatedSlugSet.has(slug);
 }
