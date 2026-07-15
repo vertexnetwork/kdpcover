@@ -146,8 +146,11 @@ function buildCover(): string {
   e.push(text(pad, 440, "rejects covers over — before you upload.", { size: 21, fill: C.sage200 }));
 
   e.push(line(pad, 506, pad + 96, 506, C.sage400, 3));
-  e.push(text(pad, 552, "Cover Pass-Check", { size: 34, weight: 800, fill: C.white, serif: true }));
-  e.push(text(pad, 584, "Pass KDP's review on the first try.", { size: 18, italic: true, fill: C.sage200 }));
+  e.push(text(pad, 548, "Cover Pass-Check", { size: 34, weight: 800, fill: C.white, serif: true }));
+  // One-line "what is this" descriptor — names the category (a checker, not the
+  // free calculator) and the bundled asset, so the buyer isn't guessing.
+  e.push(text(pad, 582, "The in-browser KDP cover checker + 2,500-template pack.", { size: 18, fill: C.sage200 }));
+  e.push(text(pad, 612, "Pass KDP's review on the first try.", { size: 16, italic: true, fill: C.sage400 }));
 
   e.push(text(pad, H - 48, "KDPCOVER.PRO · 2026 EDITION", { size: 13, weight: 600, fill: C.sage200, letterSpacing: 3 }));
 
@@ -179,16 +182,23 @@ function buildPreviewReport(): string {
   const e: string[] = [];
   e.push(rect(0, 0, W, H, C.ivory));
 
-  e.push(text(pad, 84, "THE PASS-CHECK REPORT", { size: 13, weight: 700, fill: C.warm, letterSpacing: 4 }));
-  e.push(text(pad, 144, "Your cover, checked against", { size: 44, weight: 800, fill: C.ink, serif: true }));
-  e.push(text(pad, 196, "KDP's exact spec.", { size: 44, weight: 800, fill: C.ink, serif: true }));
-  e.push(text(pad, 240, "Upload your finished file. Every requirement verified — problems flagged with the fix.", { size: 17, italic: true, fill: C.sage500 }));
+  e.push(text(pad, 72, "THE PASS-CHECK REPORT", { size: 13, weight: 700, fill: C.warm, letterSpacing: 4 }));
+  // "Example report" chip, top-right — signals this is sample output to read,
+  // not a live UI to click (mirrors the site's "(sample)" filename label).
+  {
+    const tw = 168, th = 32, tx = W - pad - tw, ty = 52;
+    e.push(rect(tx, ty, tw, th, C.white, { rx: 16, stroke: C.sage200, strokeW: 1.5 }));
+    e.push(text(tx + tw / 2, ty + 21, "EXAMPLE REPORT", { size: 12, weight: 700, fill: C.sage500, letterSpacing: 2, anchor: "middle" }));
+  }
+  e.push(text(pad, 128, "Your cover, checked against", { size: 44, weight: 800, fill: C.ink, serif: true }));
+  e.push(text(pad, 176, "KDP's exact spec.", { size: 44, weight: 800, fill: C.ink, serif: true }));
+  e.push(text(pad, 214, "Upload your finished file. Every requirement verified — problems flagged with the fix.", { size: 17, italic: true, fill: C.sage500 }));
 
   // Report card
   const cx = pad;
-  const cy = 286;
+  const cy = 252;
   const cw = W - pad * 2;
-  e.push(rect(cx, cy, cw, 432, C.white, { rx: 14, stroke: C.sage200, strokeW: 2 }));
+  e.push(rect(cx, cy, cw, 372, C.white, { rx: 14, stroke: C.sage200, strokeW: 2 }));
   // banner
   e.push(rect(cx, cy, cw, 60, C.warm50, { rx: 14 }));
   e.push(rect(cx, cy + 30, cw, 30, C.warm50)); // square off bottom of banner
@@ -203,16 +213,16 @@ function buildPreviewReport(): string {
     ["pass", "Single-page PDF", "One flattened page (back + spine + front)"],
     ["pass", "File size", "8.9 MB — within KDP's recommended ≤ 40 MB"],
   ];
-  let ry = cy + 96;
+  let ry = cy + 92;
   for (const [status, label, detail] of rows) {
     e.push(verdictIcon(cx + 34, ry, status));
     e.push(text(cx + 60, ry - 3, label, { size: 17, weight: 700, fill: C.ink }));
     e.push(text(cx + 60, ry + 19, detail, { size: 14, fill: C.sage500 }));
-    ry += 54;
+    ry += 46;
   }
 
   // punchline band
-  const py = cy + 432 + 24;
+  const py = cy + 372 + 20;
   e.push(rect(cx, py, cw, 50, C.sage400, { rx: 10 }));
   e.push(text(cx + 26, py + 32, "4 problems found — and exactly how to fix each.", { size: 19, weight: 800, fill: C.ink }));
   e.push(text(cx + cw - 26, py + 32, "Caught in your browser, before KDP sees it.", { size: 16, weight: 700, fill: C.ink, anchor: "end" }));
@@ -288,6 +298,12 @@ function buildPreviewWorked(): string {
   e.push(rect(0, 0, W, H, C.ivory));
 
   e.push(text(pad, 92, "THE #1 REASON KDP REJECTS COVERS", { size: 13, weight: 700, fill: C.warm, letterSpacing: 3 }));
+  // "Example" chip, top-right — an illustrative case (6×9, 300pp), not a live UI.
+  {
+    const tw = 130, th = 32, tx = W - pad - tw, ty = 68;
+    e.push(rect(tx, ty, tw, th, C.white, { rx: 16, stroke: C.sage200, strokeW: 1.5 }));
+    e.push(text(tx + tw / 2, ty + 21, "EXAMPLE", { size: 12, weight: 700, fill: C.sage500, letterSpacing: 2, anchor: "middle" }));
+  }
   e.push(text(pad, 152, "Wrong full-cover size.", { size: 46, weight: 800, fill: C.ink, serif: true }));
   e.push(text(pad, 198, "Your design tool gives you the trim. KDP wants the trim + bleed + spine.", { size: 18, italic: true, fill: C.sage500 }));
 
@@ -371,7 +387,7 @@ function buildPreviewHow(): string {
   e.push(text(pad, 152, "Three steps. No login. No upload.", { size: 46, weight: 800, fill: C.ink, serif: true }));
 
   const steps: Array<[string, string, string]> = [
-    ["1", "Set your book", "Format, trim, paper, page count — the same inputs as the free calculator."],
+    ["1", "Set your book", "Format, trim, paper, and page count — your book's exact specs."],
     ["2", "Drop your cover", "PDF, PNG, or JPG. It's read in your browser and never leaves your device."],
     ["3", "Get the verdict", "A pass/fail report with the exact fix for anything KDP would reject."],
   ];
@@ -391,7 +407,7 @@ function buildPreviewHow(): string {
   });
 
   e.push(rect(pad, 620, W - pad * 2, 56, C.ink, { rx: 10 }));
-  e.push(text(W / 2, 655, "Your cover file never touches a server. Privacy-first, like the free calculator.", { size: 19, weight: 700, fill: C.sage400, anchor: "middle" }));
+  e.push(text(W / 2, 655, "Your cover file never touches a server — it's parsed entirely in your browser.", { size: 19, weight: 700, fill: C.sage400, anchor: "middle" }));
 
   return svg(W, H, e.join(""));
 }
